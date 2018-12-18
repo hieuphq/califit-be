@@ -1,0 +1,7 @@
+[psql]
+blacklist = ["goose_db_version"]
+dbname = "califit"
+user = "postgres"
+pass = "postgres"
+host = "localhost"
+sslmode = "disable"

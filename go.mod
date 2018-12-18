@@ -15,17 +15,20 @@ require (
 	github.com/inconshreveable/log15 v0.0.0-20180818164646-67afb5ed74ec // indirect
 	github.com/inconshreveable/mousetrap v1.0.0 // indirect
 	github.com/joho/godotenv v1.3.0
+	github.com/lib/pq v1.0.0
 	github.com/manveru/faker v0.0.0-20171103152722-9fbc68a78c4d // indirect
 	github.com/mattn/go-colorable v0.0.9 // indirect
 	github.com/mattn/go-isatty v0.0.4 // indirect
 	github.com/pkg/errors v0.8.0 // indirect
+	github.com/pressly/goose v2.4.5+incompatible
 	github.com/satori/go.uuid v1.2.1-0.20181028125025-b2ce2384e17b // indirect
 	github.com/sirupsen/logrus v1.2.0 // indirect
 	github.com/spf13/cobra v0.0.3
-	github.com/spf13/pflag v1.0.3 // indirect
+	github.com/spf13/viper v1.3.1
 	github.com/ugorji/go/codec v0.0.0-20181209151446-772ced7fd4c2 // indirect
+	github.com/volatiletech/inflect v0.0.0-20170731032912-e7201282ae8d // indirect
+	github.com/volatiletech/sqlboiler v3.1.0+incompatible // indirect
 	github.com/zach-klippenstein/goregen v0.0.0-20160303162051-795b5e3961ea // indirect
 	golang.org/x/net v0.0.0-20181217023233-e147a9138326 // indirect
 	golang.org/x/tools v0.0.0-20181218020041-13ba8ad772df // indirect
-	gopkg.in/yaml.v2 v2.2.2 // indirect
 )
