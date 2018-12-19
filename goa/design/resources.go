@@ -43,3 +43,37 @@ var _ = Resource("authentication", func() {
 		Response(BadRequest, ErrorMedia)
 	})
 })
+
+var _ = Resource("city", func() {
+	BasePath("/city")
+
+	Action("list", func() {
+		Routing(GET(""))
+		Params(func() {
+			Param("limit", Integer, "limit for paginate", func() {
+				Default(10)
+			})
+			Param("offset", Integer, "offset for paginate", func() {
+				Default(0)
+			})
+			Param("name", String, "query for find cities by name", func() {
+				Default("")
+			})
+		})
+		Description("List cities")
+		Response(OK, CityList)
+		Response(NotFound, ErrorMedia)
+		Response(InternalServerError, ErrorMedia)
+	})
+
+	Action("show", func() {
+		Routing(GET("/:cityID"))
+		Params(func() {
+			Param("cityID", String, "City ID")
+		})
+		Description("Get a city by ID")
+		Response(OK, City)
+		Response(NotFound, ErrorMedia)
+		Response(InternalServerError, ErrorMedia)
+	})
+})

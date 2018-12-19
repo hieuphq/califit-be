@@ -182,3 +182,77 @@ func unmarshalRegisterAuthenticationPayload(ctx context.Context, service *goa.Se
 	goa.ContextRequest(ctx).Payload = payload.Publicize()
 	return nil
 }
+
+// CityController is the controller interface for the City actions.
+type CityController interface {
+	goa.Muxer
+	List(*ListCityContext) error
+	Show(*ShowCityContext) error
+}
+
+// MountCityController "mounts" a City resource controller on the given service.
+func MountCityController(service *goa.Service, ctrl CityController) {
+	initService(service)
+	var h goa.Handler
+	service.Mux.Handle("OPTIONS", "/api/city", ctrl.MuxHandler("preflight", handleCityOrigin(cors.HandlePreflight()), nil))
+	service.Mux.Handle("OPTIONS", "/api/city/:cityID", ctrl.MuxHandler("preflight", handleCityOrigin(cors.HandlePreflight()), nil))
+
+	h = func(ctx context.Context, rw http.ResponseWriter, req *http.Request) error {
+		// Check if there was an error loading the request
+		if err := goa.ContextError(ctx); err != nil {
+			return err
+		}
+		// Build the context
+		rctx, err := NewListCityContext(ctx, req, service)
+		if err != nil {
+			return err
+		}
+		return ctrl.List(rctx)
+	}
+	h = handleCityOrigin(h)
+	service.Mux.Handle("GET", "/api/city", ctrl.MuxHandler("list", h, nil))
+	service.LogInfo("mount", "ctrl", "City", "action", "List", "route", "GET /api/city")
+
+	h = func(ctx context.Context, rw http.ResponseWriter, req *http.Request) error {
+		// Check if there was an error loading the request
+		if err := goa.ContextError(ctx); err != nil {
+			return err
+		}
+		// Build the context
+		rctx, err := NewShowCityContext(ctx, req, service)
+		if err != nil {
+			return err
+		}
+		return ctrl.Show(rctx)
+	}
+	h = handleCityOrigin(h)
+	service.Mux.Handle("GET", "/api/city/:cityID", ctrl.MuxHandler("show", h, nil))
+	service.LogInfo("mount", "ctrl", "City", "action", "Show", "route", "GET /api/city/:cityID")
+}
+
+// handleCityOrigin applies the CORS response headers corresponding to the origin.
+func handleCityOrigin(h goa.Handler) goa.Handler {
+
+	return func(ctx context.Context, rw http.ResponseWriter, req *http.Request) error {
+		origin := req.Header.Get("Origin")
+		if origin == "" {
+			// Not a CORS request
+			return h(ctx, rw, req)
+		}
+		if cors.MatchOrigin(origin, "*") {
+			ctx = goa.WithLogContext(ctx, "origin", origin)
+			rw.Header().Set("Access-Control-Allow-Origin", origin)
+			rw.Header().Set("Access-Control-Expose-Headers", "Content-Type, Origin")
+			rw.Header().Set("Access-Control-Max-Age", "600")
+			rw.Header().Set("Access-Control-Allow-Credentials", "true")
+			if acrm := req.Header.Get("Access-Control-Request-Method"); acrm != "" {
+				// We are handling a preflight request
+				rw.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, PATCH, DELETE, OPTIONS")
+				rw.Header().Set("Access-Control-Allow-Headers", "Accept, Content-Type, Authorization")
+			}
+			return h(ctx, rw, req)
+		}
+
+		return h(ctx, rw, req)
+	}
+}

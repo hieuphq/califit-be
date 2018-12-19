@@ -26,8 +26,9 @@ type Center struct {
 	ID        string      `boil:"id" json:"id" toml:"id" yaml:"id"`
 	Name      null.String `boil:"name" json:"name,omitempty" toml:"name" yaml:"name,omitempty"`
 	AddressID null.String `boil:"address_id" json:"address_id,omitempty" toml:"address_id" yaml:"address_id,omitempty"`
-	OpenAt    null.Time   `boil:"open_at" json:"open_at,omitempty" toml:"open_at" yaml:"open_at,omitempty"`
-	CloseAt   null.Time   `boil:"close_at" json:"close_at,omitempty" toml:"close_at" yaml:"close_at,omitempty"`
+	CityID    null.String `boil:"city_id" json:"city_id,omitempty" toml:"city_id" yaml:"city_id,omitempty"`
+	OpenAt    null.String `boil:"open_at" json:"open_at,omitempty" toml:"open_at" yaml:"open_at,omitempty"`
+	CloseAt   null.String `boil:"close_at" json:"close_at,omitempty" toml:"close_at" yaml:"close_at,omitempty"`
 	CreatedAt time.Time   `boil:"created_at" json:"created_at" toml:"created_at" yaml:"created_at"`
 	UpdatedAt time.Time   `boil:"updated_at" json:"updated_at" toml:"updated_at" yaml:"updated_at"`
 
@@ -39,6 +40,7 @@ var CenterColumns = struct {
 	ID        string
 	Name      string
 	AddressID string
+	CityID    string
 	OpenAt    string
 	CloseAt   string
 	CreatedAt string
@@ -47,6 +49,7 @@ var CenterColumns = struct {
 	ID:        "id",
 	Name:      "name",
 	AddressID: "address_id",
+	CityID:    "city_id",
 	OpenAt:    "open_at",
 	CloseAt:   "close_at",
 	CreatedAt: "created_at",
@@ -56,15 +59,18 @@ var CenterColumns = struct {
 // CenterRels is where relationship names are stored.
 var CenterRels = struct {
 	Address   string
+	City      string
 	Schedules string
 }{
 	Address:   "Address",
+	City:      "City",
 	Schedules: "Schedules",
 }
 
 // centerR is where relationships are stored.
 type centerR struct {
 	Address   *Address
+	City      *City
 	Schedules ScheduleSlice
 }
 
@@ -77,8 +83,8 @@ func (*centerR) NewStruct() *centerR {
 type centerL struct{}
 
 var (
-	centerColumns               = []string{"id", "name", "address_id", "open_at", "close_at", "created_at", "updated_at"}
-	centerColumnsWithoutDefault = []string{"id", "name", "address_id", "open_at", "close_at"}
+	centerColumns               = []string{"id", "name", "address_id", "city_id", "open_at", "close_at", "created_at", "updated_at"}
+	centerColumnsWithoutDefault = []string{"id", "name", "address_id", "city_id", "open_at", "close_at"}
 	centerColumnsWithDefault    = []string{"created_at", "updated_at"}
 	centerPrimaryKeyColumns     = []string{"id"}
 )
@@ -333,6 +339,20 @@ func (o *Center) Address(mods ...qm.QueryMod) addressQuery {
 	return query
 }
 
+// City pointed to by the foreign key.
+func (o *Center) City(mods ...qm.QueryMod) cityQuery {
+	queryMods := []qm.QueryMod{
+		qm.Where("id=?", o.CityID),
+	}
+
+	queryMods = append(queryMods, mods...)
+
+	query := Cities(queryMods...)
+	queries.SetFrom(query.Query, "\"city\"")
+
+	return query
+}
+
 // Schedules retrieves all the schedule's Schedules with an executor.
 func (o *Center) Schedules(mods ...qm.QueryMod) scheduleQuery {
 	var queryMods []qm.QueryMod
@@ -445,6 +465,107 @@ func (centerL) LoadAddress(ctx context.Context, e boil.ContextExecutor, singular
 				local.R.Address = foreign
 				if foreign.R == nil {
 					foreign.R = &addressR{}
+				}
+				foreign.R.Centers = append(foreign.R.Centers, local)
+				break
+			}
+		}
+	}
+
+	return nil
+}
+
+// LoadCity allows an eager lookup of values, cached into the
+// loaded structs of the objects. This is for an N-1 relationship.
+func (centerL) LoadCity(ctx context.Context, e boil.ContextExecutor, singular bool, maybeCenter interface{}, mods queries.Applicator) error {
+	var slice []*Center
+	var object *Center
+
+	if singular {
+		object = maybeCenter.(*Center)
+	} else {
+		slice = *maybeCenter.(*[]*Center)
+	}
+
+	args := make([]interface{}, 0, 1)
+	if singular {
+		if object.R == nil {
+			object.R = &centerR{}
+		}
+		if !queries.IsNil(object.CityID) {
+			args = append(args, object.CityID)
+		}
+
+	} else {
+	Outer:
+		for _, obj := range slice {
+			if obj.R == nil {
+				obj.R = &centerR{}
+			}
+
+			for _, a := range args {
+				if queries.Equal(a, obj.CityID) {
+					continue Outer
+				}
+			}
+
+			if !queries.IsNil(obj.CityID) {
+				args = append(args, obj.CityID)
+			}
+
+		}
+	}
+
+	query := NewQuery(qm.From(`city`), qm.WhereIn(`id in ?`, args...))
+	if mods != nil {
+		mods.Apply(query)
+	}
+
+	results, err := query.QueryContext(ctx, e)
+	if err != nil {
+		return errors.Wrap(err, "failed to eager load City")
+	}
+
+	var resultSlice []*City
+	if err = queries.Bind(results, &resultSlice); err != nil {
+		return errors.Wrap(err, "failed to bind eager loaded slice City")
+	}
+
+	if err = results.Close(); err != nil {
+		return errors.Wrap(err, "failed to close results of eager load for city")
+	}
+	if err = results.Err(); err != nil {
+		return errors.Wrap(err, "error occurred during iteration of eager loaded relations for city")
+	}
+
+	if len(centerAfterSelectHooks) != 0 {
+		for _, obj := range resultSlice {
+			if err := obj.doAfterSelectHooks(ctx, e); err != nil {
+				return err
+			}
+		}
+	}
+
+	if len(resultSlice) == 0 {
+		return nil
+	}
+
+	if singular {
+		foreign := resultSlice[0]
+		object.R.City = foreign
+		if foreign.R == nil {
+			foreign.R = &cityR{}
+		}
+		foreign.R.Centers = append(foreign.R.Centers, object)
+		return nil
+	}
+
+	for _, local := range slice {
+		for _, foreign := range resultSlice {
+			if queries.Equal(local.CityID, foreign.ID) {
+				local.R.City = foreign
+				if foreign.R == nil {
+					foreign.R = &cityR{}
 				}
 				foreign.R.Centers = append(foreign.R.Centers, local)
 				break
@@ -611,6 +732,84 @@ func (o *Center) RemoveAddress(ctx context.Context, exec boil.ContextExecutor, r
 
 	for i, ri := range related.R.Centers {
 		if queries.Equal(o.AddressID, ri.AddressID) {
+			continue
+		}
+
+		ln := len(related.R.Centers)
+		if ln > 1 && i < ln-1 {
+			related.R.Centers[i] = related.R.Centers[ln-1]
+		}
+		related.R.Centers = related.R.Centers[:ln-1]
+		break
+	}
+	return nil
+}
+
+// SetCity of the center to the related item.
+// Sets o.R.City to related.
+// Adds o to related.R.Centers.
+func (o *Center) SetCity(ctx context.Context, exec boil.ContextExecutor, insert bool, related *City) error {
+	var err error
+	if insert {
+		if err = related.Insert(ctx, exec, boil.Infer()); err != nil {
+			return errors.Wrap(err, "failed to insert into foreign table")
+		}
+	}
+
+	updateQuery := fmt.Sprintf(
+		"UPDATE \"center\" SET %s WHERE %s",
+		strmangle.SetParamNames("\"", "\"", 1, []string{"city_id"}),
+		strmangle.WhereClause("\"", "\"", 2, centerPrimaryKeyColumns),
+	)
+	values := []interface{}{related.ID, o.ID}
+
+	if boil.DebugMode {
+		fmt.Fprintln(boil.DebugWriter, updateQuery)
+		fmt.Fprintln(boil.DebugWriter, values)
+	}
+
+	if _, err = exec.ExecContext(ctx, updateQuery, values...); err != nil {
+		return errors.Wrap(err, "failed to update local table")
+	}
+
+	queries.Assign(&o.CityID, related.ID)
+	if o.R == nil {
+		o.R = &centerR{
+			City: related,
+		}
+	} else {
+		o.R.City = related
+	}
+
+	if related.R == nil {
+		related.R = &cityR{
+			Centers: CenterSlice{o},
+		}
+	} else {
+		related.R.Centers = append(related.R.Centers, o)
+	}
+
+	return nil
+}
+
+// RemoveCity relationship.
+// Sets o.R.City to nil.
+// Removes o from all passed in related items' relationships struct (Optional).
+func (o *Center) RemoveCity(ctx context.Context, exec boil.ContextExecutor, related *City) error {
+	var err error
+
+	queries.SetScanner(&o.CityID, nil)
+	if _, err = o.Update(ctx, exec, boil.Whitelist("city_id")); err != nil {
+		return errors.Wrap(err, "failed to update local table")
+	}
+
+	o.R.City = nil
+	if related == nil || related.R == nil {
+		return nil
+	}
+
+	for i, ri := range related.R.Centers {
+		if queries.Equal(o.CityID, ri.CityID) {
 			continue
 		}
 

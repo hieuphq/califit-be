@@ -20,6 +20,7 @@ import (
 	"github.com/hieuphq/califit-be/goa/client"
 	"github.com/spf13/cobra"
 	"log"
+	"net/url"
 	"os"
 	"strconv"
 	"strings"
@@ -47,40 +48,50 @@ type (
 		ContentType string
 		PrettyPrint bool
 	}
+
+	// ListCityCommand is the command line data structure for the list action of city
+	ListCityCommand struct {
+		// limit for paginate
+		Limit int
+		// query for find cities by name
+		Name string
+		// offset for paginate
+		Offset      int
+		PrettyPrint bool
+	}
+
+	// ShowCityCommand is the command line data structure for the show action of city
+	ShowCityCommand struct {
+		// City ID
+		CityID      string
+		PrettyPrint bool
+	}
 )
 
 // RegisterCommands registers the resource action CLI commands.
 func RegisterCommands(app *cobra.Command, c *client.Client) {
 	var command, sub *cobra.Command
 	command = &cobra.Command{
-		Use:   "login",
-		Short: `Sign a company user in`,
+		Use:   "list",
+		Short: `List cities`,
 	}
-	tmp1 := new(LoginAuthenticationCommand)
+	tmp1 := new(ListCityCommand)
 	sub = &cobra.Command{
-		Use:   `authentication ["/api/auth/login"]`,
+		Use:   `city ["/api/city"]`,
 		Short: ``,
-		Long: `
-
-Payload example:
-
-{
-   "email": "jamesbond@gmail.com",
-   "password": "abcd1234"
-}`,
-		RunE: func(cmd *cobra.Command, args []string) error { return tmp1.Run(c, args) },
+		RunE:  func(cmd *cobra.Command, args []string) error { return tmp1.Run(c, args) },
 	}
 	tmp1.RegisterFlags(sub, c)
 	sub.PersistentFlags().BoolVar(&tmp1.PrettyPrint, "pp", false, "Pretty print response body")
 	command.AddCommand(sub)
 	app.AddCommand(command)
 	command = &cobra.Command{
-		Use:   "logout",
+		Use:   "login",
 		Short: `Sign a company user in`,
 	}
-	tmp2 := new(LogoutAuthenticationCommand)
+	tmp2 := new(LoginAuthenticationCommand)
 	sub = &cobra.Command{
-		Use:   `authentication ["/api/auth/logout"]`,
+		Use:   `authentication ["/api/auth/login"]`,
 		Short: ``,
 		Long: `
 
@@ -97,10 +108,32 @@ Payload example:
 	command.AddCommand(sub)
 	app.AddCommand(command)
 	command = &cobra.Command{
+		Use:   "logout",
+		Short: `Sign a company user in`,
+	}
+	tmp3 := new(LogoutAuthenticationCommand)
+	sub = &cobra.Command{
+		Use:   `authentication ["/api/auth/logout"]`,
+		Short: ``,
+		Long: `
+
+Payload example:
+
+{
+   "email": "jamesbond@gmail.com",
+   "password": "abcd1234"
+}`,
+		RunE: func(cmd *cobra.Command, args []string) error { return tmp3.Run(c, args) },
+	}
+	tmp3.RegisterFlags(sub, c)
+	sub.PersistentFlags().BoolVar(&tmp3.PrettyPrint, "pp", false, "Pretty print response body")
+	command.AddCommand(sub)
+	app.AddCommand(command)
+	command = &cobra.Command{
 		Use:   "register",
 		Short: `Create a new user`,
 	}
-	tmp3 := new(RegisterAuthenticationCommand)
+	tmp4 := new(RegisterAuthenticationCommand)
 	sub = &cobra.Command{
 		Use:   `authentication ["/api/auth/register"]`,
 		Short: ``,
@@ -114,12 +147,26 @@ Payload example:
    "contact_name": "Doe",
    "email": "jamesbond@gmail.com",
    "password": "abcd1234",
-   "phone": "mz0qovdh47"
+   "phone": "p0lba0qgou"
 }`,
-		RunE: func(cmd *cobra.Command, args []string) error { return tmp3.Run(c, args) },
+		RunE: func(cmd *cobra.Command, args []string) error { return tmp4.Run(c, args) },
 	}
-	tmp3.RegisterFlags(sub, c)
-	sub.PersistentFlags().BoolVar(&tmp3.PrettyPrint, "pp", false, "Pretty print response body")
+	tmp4.RegisterFlags(sub, c)
+	sub.PersistentFlags().BoolVar(&tmp4.PrettyPrint, "pp", false, "Pretty print response body")
+	command.AddCommand(sub)
+	app.AddCommand(command)
+	command = &cobra.Command{
+		Use:   "show",
+		Short: `Get a city by ID`,
+	}
+	tmp5 := new(ShowCityCommand)
+	sub = &cobra.Command{
+		Use:   `city ["/api/city/CITYID"]`,
+		Short: ``,
+		RunE:  func(cmd *cobra.Command, args []string) error { return tmp5.Run(c, args) },
+	}
+	tmp5.RegisterFlags(sub, c)
+	sub.PersistentFlags().BoolVar(&tmp5.PrettyPrint, "pp", false, "Pretty print response body")
 	command.AddCommand(sub)
 	app.AddCommand(command)
 }
@@ -374,4 +421,59 @@ func (cmd *RegisterAuthenticationCommand) Run(c *client.Client, args []string) e
 func (cmd *RegisterAuthenticationCommand) RegisterFlags(cc *cobra.Command, c *client.Client) {
 	cc.Flags().StringVar(&cmd.Payload, "payload", "", "Request body encoded in JSON")
 	cc.Flags().StringVar(&cmd.ContentType, "content", "", "Request content type override, e.g. 'application/x-www-form-urlencoded'")
+}
+
+// Run makes the HTTP request corresponding to the ListCityCommand command.
+func (cmd *ListCityCommand) Run(c *client.Client, args []string) error {
+	var path string
+	if len(args) > 0 {
+		path = args[0]
+	} else {
+		path = "/api/city"
+	}
+	logger := goa.NewLogger(log.New(os.Stderr, "", log.LstdFlags))
+	ctx := goa.WithLogger(context.Background(), logger)
+	resp, err := c.ListCity(ctx, path, intFlagVal("limit", cmd.Limit), stringFlagVal("name", cmd.Name), intFlagVal("offset", cmd.Offset))
+	if err != nil {
+		goa.LogError(ctx, "failed", "err", err)
+		return err
+	}
+
+	goaclient.HandleResponse(c.Client, resp, cmd.PrettyPrint)
+	return nil
+}
+
+// RegisterFlags registers the command flags with the command line.
+func (cmd *ListCityCommand) RegisterFlags(cc *cobra.Command, c *client.Client) {
+	cc.Flags().IntVar(&cmd.Limit, "limit", 10, `limit for paginate`)
+	var name string
+	cc.Flags().StringVar(&cmd.Name, "name", name, `query for find cities by name`)
+	var offset int
+	cc.Flags().IntVar(&cmd.Offset, "offset", offset, `offset for paginate`)
+}
+
+// Run makes the HTTP request corresponding to the ShowCityCommand command.
+func (cmd *ShowCityCommand) Run(c *client.Client, args []string) error {
+	var path string
+	if len(args) > 0 {
+		path = args[0]
+	} else {
+		path = fmt.Sprintf("/api/city/%v", url.QueryEscape(cmd.CityID))
+	}
+	logger := goa.NewLogger(log.New(os.Stderr, "", log.LstdFlags))
+	ctx := goa.WithLogger(context.Background(), logger)
+	resp, err := c.ShowCity(ctx, path)
+	if err != nil {
+		goa.LogError(ctx, "failed", "err", err)
+		return err
+	}
+
+	goaclient.HandleResponse(c.Client, resp, cmd.PrettyPrint)
+	return nil
+}
+
+// RegisterFlags registers the command flags with the command line.
+func (cmd *ShowCityCommand) RegisterFlags(cc *cobra.Command, c *client.Client) {
+	var cityID string
+	cc.Flags().StringVar(&cmd.CityID, "cityID", cityID, `City ID`)
 }

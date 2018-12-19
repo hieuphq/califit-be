@@ -2,19 +2,81 @@ basePath: /api/
 consumes:
 - application/json
 definitions:
+  Cities:
+    description: A list of City (default view)
+    example:
+      data:
+      - city_id: Et praesentium.
+        city_name: Quas reiciendis eum natus rerum sit accusantium.
+        created_at: "1993-07-17T01:28:42Z"
+      paginate:
+        current_page: 3.161111681195654e+16
+        total_item: 4.2427972326251945e+18
+        total_page: 3.2758635658199117e+18
+    properties:
+      data:
+        example:
+        - city_id: Et praesentium.
+          city_name: Quas reiciendis eum natus rerum sit accusantium.
+          created_at: "1993-07-17T01:28:42Z"
+        items:
+          $ref: '#/definitions/CityGeneral'
+        type: array
+      paginate:
+        $ref: '#/definitions/Paginate'
+    title: 'Mediatype identifier: application/vnd.cities+json; view=default'
+    type: object
+  City:
+    description: a city detail (default view)
+    example:
+      city_id: Illum voluptatibus tenetur numquam eum.
+      city_name: Est aut ducimus ducimus repellat minus.
+      created_at: "1977-11-30T13:57:32Z"
+    properties:
+      city_id:
+        example: Illum voluptatibus tenetur numquam eum.
+        type: string
+      city_name:
+        example: Est aut ducimus ducimus repellat minus.
+        type: string
+      created_at:
+        example: "1977-11-30T13:57:32Z"
+        format: date-time
+        type: string
+    title: 'Mediatype identifier: application/vnd.city+json; view=default'
+    type: object
+  CityGeneral:
+    description: a city detail (general view)
+    example:
+      city_id: Et praesentium.
+      city_name: Quas reiciendis eum natus rerum sit accusantium.
+      created_at: "1993-07-17T01:28:42Z"
+    properties:
+      city_id:
+        example: Et praesentium.
+        type: string
+      city_name:
+        example: Quas reiciendis eum natus rerum sit accusantium.
+        type: string
+      created_at:
+        example: "1993-07-17T01:28:42Z"
+        format: date-time
+        type: string
+    title: 'Mediatype identifier: application/vnd.city+json; view=general'
+    type: object
   Login_response:
     description: Login response (default view)
     example:
-      token: Adipisci et praesentium labore.
+      token: Non ipsa et quam dolore.
       user_info:
-        company_address: Reiciendis eum natus rerum.
-        company_name: Accusantium accusantium vel ut et quo.
-        contact_name: Voluptatibus tenetur numquam eum expedita est aut.
-        email: Ducimus repellat.
-        phone: Minus rerum non ipsa et quam dolore.
+        company_address: Sint qui sed dolor.
+        company_name: Inventore perferendis molestiae vitae repellendus.
+        contact_name: A quo quo officiis rerum qui amet.
+        email: Assumenda voluptatum quos.
+        phone: Accusantium hic vel.
     properties:
       token:
-        example: Adipisci et praesentium labore.
+        example: Non ipsa et quam dolore.
         type: string
       user_info:
         $ref: '#/definitions/User_info'
@@ -41,6 +103,27 @@ definitions:
     - password
     title: LoginPayload
     type: object
+  Paginate:
+    description: pagination of a resources (default view)
+    example:
+      current_page: 3.161111681195654e+16
+      total_item: 4.2427972326251945e+18
+      total_page: 3.2758635658199117e+18
+    properties:
+      current_page:
+        example: 3.161111681195654e+16
+        format: int64
+        type: integer
+      total_item:
+        example: 4.2427972326251945e+18
+        format: int64
+        type: integer
+      total_page:
+        example: 3.2758635658199117e+18
+        format: int64
+        type: integer
+    title: 'Mediatype identifier: application/vnd.paginate+json; view=default'
+    type: object
   RegisterPayload:
     example:
       company_address: 445 Mount Eden Road, Mount Eden, Auckland
@@ -48,7 +131,7 @@ definitions:
       contact_name: Doe
       email: jamesbond@gmail.com
       password: abcd1234
-      phone: mz0qovdh47
+      phone: p0lba0qgou
     properties:
       company_address:
         example: 445 Mount Eden Road, Mount Eden, Auckland
@@ -77,7 +160,7 @@ definitions:
         minLength: 8
         type: string
       phone:
-        example: mz0qovdh47
+        example: p0lba0qgou
         maxLength: 50
         type: string
     required:
@@ -92,37 +175,37 @@ definitions:
   Token:
     description: A token (default view)
     example:
-      token: Sint qui sed dolor.
+      token: Atque reiciendis saepe voluptatem rerum et voluptatum.
     properties:
       token:
         description: A JWT token
-        example: Sint qui sed dolor.
+        example: Atque reiciendis saepe voluptatem rerum et voluptatum.
         type: string
     title: 'Mediatype identifier: application/vnd.token+json; view=default'
     type: object
   User_info:
     description: User info (default view)
     example:
-      company_address: Reiciendis eum natus rerum.
-      company_name: Accusantium accusantium vel ut et quo.
-      contact_name: Voluptatibus tenetur numquam eum expedita est aut.
-      email: Ducimus repellat.
-      phone: Minus rerum non ipsa et quam dolore.
+      company_address: Sint qui sed dolor.
+      company_name: Inventore perferendis molestiae vitae repellendus.
+      contact_name: A quo quo officiis rerum qui amet.
+      email: Assumenda voluptatum quos.
+      phone: Accusantium hic vel.
     properties:
       company_address:
-        example: Reiciendis eum natus rerum.
+        example: Sint qui sed dolor.
         type: string
       company_name:
-        example: Accusantium accusantium vel ut et quo.
+        example: Inventore perferendis molestiae vitae repellendus.
         type: string
       contact_name:
-        example: Voluptatibus tenetur numquam eum expedita est aut.
+        example: A quo quo officiis rerum qui amet.
         type: string
       email:
-        example: Ducimus repellat.
+        example: Assumenda voluptatum quos.
         type: string
       phone:
-        example: Minus rerum non ipsa et quam dolore.
+        example: Accusantium hic vel.
         type: string
     title: 'Mediatype identifier: application/vnd.user_info+json; view=default'
     type: object
@@ -259,6 +342,81 @@ paths:
       summary: register authentication
       tags:
       - authentication
+  city:
+    get:
+      description: List cities
+      operationId: city#list
+      parameters:
+      - default: 10
+        description: limit for paginate
+        in: query
+        name: limit
+        required: false
+        type: integer
+      - default: ""
+        description: query for find cities by name
+        in: query
+        name: name
+        required: false
+        type: string
+      - default: 0
+        description: offset for paginate
+        in: query
+        name: offset
+        required: false
+        type: integer
+      produces:
+      - application/vnd.cities+json
+      - application/vnd.goa.error
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/Cities'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/error'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/error'
+      schemes:
+      - https
+      summary: list city
+      tags:
+      - city
+  city/{cityID}:
+    get:
+      description: Get a city by ID
+      operationId: city#show
+      parameters:
+      - description: City ID
+        in: path
+        name: cityID
+        required: true
+        type: string
+      produces:
+      - application/vnd.city+json
+      - application/vnd.goa.error
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/City'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/error'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/error'
+      schemes:
+      - https
+      summary: show city
+      tags:
+      - city
 produces:
 - application/json
 responses:

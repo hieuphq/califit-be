@@ -48,3 +48,53 @@ var UserInfo = MediaType("application/vnd.user_info+json", func() {
 		Attribute("company_address")
 	})
 })
+
+// City response data
+var City = MediaType("application/vnd.city+json", func() {
+	Description("a city detail")
+
+	Attribute("city_id", String)
+	Attribute("city_name", String)
+	Attribute("created_at", DateTime)
+
+	View("default", func() {
+		Attribute("city_id", String)
+		Attribute("city_name", String)
+		Attribute("created_at", DateTime)
+	})
+
+	View("general", func() {
+		Attribute("city_id", String)
+		Attribute("city_name", String)
+		Attribute("created_at", DateTime)
+	})
+})
+
+// CityList enum of city
+var CityList = MediaType("application/vnd.cities+json", func() {
+	Description("A list of City")
+
+	Attribute("data", ArrayOf(City, func() {
+		View("general")
+	}))
+	Attribute("paginate", Paginate)
+
+	View("default", func() {
+		Attribute("data")
+		Attribute("paginate")
+	})
+})
+
+// Paginate response
+var Paginate = MediaType("application/vnd.paginate+json", func() {
+	Description("pagination of a resources")
+	Attribute("current_page", Integer)
+	Attribute("total_page", Integer)
+	Attribute("total_item", Integer)
+
+	View("default", func() {
+		Attribute("current_page")
+		Attribute("total_page")
+		Attribute("total_item")
+	})
+})

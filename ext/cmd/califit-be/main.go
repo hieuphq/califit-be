@@ -4,12 +4,15 @@ import (
 	"log"
 	"os"
 
-	"github.com/hieuphq/califit-be/goa/app"
-
-	"github.com/hieuphq/califit-be/ext/controller"
-
 	"github.com/goadesign/goa"
+	"github.com/goadesign/goa/middleware"
 	"github.com/joho/godotenv"
+
+	"github.com/hieuphq/califit-be/ext/config"
+	"github.com/hieuphq/califit-be/ext/controller"
+	"github.com/hieuphq/califit-be/ext/repository"
+	"github.com/hieuphq/califit-be/ext/repository/city"
+	"github.com/hieuphq/califit-be/goa/app"
 )
 
 func main() {
@@ -34,34 +37,22 @@ func main() {
 
 	// // create sendgrid client
 	// sendgrider := sendgrid.NewClient(os.Getenv("SENDGRID_API_KEY"))
-	// // Mount middleware
+
+	// Mount middleware
 	// app.UseJWTMiddleware(service, jwtMiddleware)
-	// service.Use(middleware.RequestID())
-	// service.Use(middleware.LogRequest(true))
-	// service.Use(middleware.ErrorHandler(service, true))
-	// service.Use(middleware.Recover())
+	service.Use(middleware.RequestID())
+	service.Use(middleware.LogRequest(true))
+	service.Use(middleware.ErrorHandler(service, true))
+	service.Use(middleware.Recover())
 
-	// // Setup DB
-	// db, closeDB := config.NewPGConnection(os.Getenv("DB_DATASOURCE"))
-	// defer closeDB()
+	// Setup DB
+	db, closeDB := config.NewPGConnection(os.Getenv("DB_DATASOURCE"))
+	defer closeDB()
 
-	// // Setup firebase service
-	// fbclient := firebase.NewService(
-	// 	os.Getenv("FIREBASE_API_KEY"),
-	// 	os.Getenv("FIREBASE_DOMAIN_PREFIX"),
-	// 	os.Getenv("ANDROID_PACKAGE_NAME"),
-	// 	os.Getenv("IOS_BUNDLE_ID"),
-	// 	os.Getenv("WEB_ENDPOINT"),
-	// 	os.Getenv("IOS_APPSTORE_ID"),
-	// )
-
-	// // Setup store
-	// store := &repository.Repository{
-	// 	User:    user.NewPGStore(db),
-	// 	Vehicle: vehicle.NewPGStore(db),
-	// 	Route:   route.NewPGStore(db),
-	// 	Driver:  driver.NewPGStore(db),
-	// }
+	// Setup store
+	store := &repository.Repository{
+		City: city.NewPGStore(db),
+	}
 
 	// // Mount "authentication" controller
 	c := controller.NewAuthenticationController(service)
@@ -71,8 +62,8 @@ func main() {
 	// c2 := controller.NewSwaggerController(service)
 	// app.MountSwaggerController(service, c2)
 
-	// c3 := controller.NewRoutesController(service, pgRoutingService, mapboxService, store, fbclient)
-	// app.MountRoutesController(service, c3)
+	c3 := controller.NewCityController(service, store)
+	app.MountCityController(service, c3)
 
 	// c4 := controller.NewVehiclesController(service, store)
 	// app.MountVehiclesController(service, c4)

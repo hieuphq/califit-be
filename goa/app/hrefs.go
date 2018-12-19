@@ -9,3 +9,14 @@
 // --version=v1.4.0
 
 package app
+
+import (
+	"fmt"
+	"strings"
+)
+
+// CityHref returns the resource href.
+func CityHref(cityID interface{}) string {
+	paramcityID := strings.TrimLeftFunc(fmt.Sprintf("%v", cityID), func(r rune) bool { return r == '/' })
+	return fmt.Sprintf("/api/city/%v", paramcityID)
+}

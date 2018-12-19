@@ -10,12 +10,51 @@
 
 package app
 
+import (
+	"time"
+)
+
+// A list of City (default view)
+//
+// Identifier: application/vnd.cities+json; view=default
+type Cities struct {
+	Data     []*City   `form:"data,omitempty" json:"data,omitempty" yaml:"data,omitempty" xml:"data,omitempty"`
+	Paginate *Paginate `form:"paginate,omitempty" json:"paginate,omitempty" yaml:"paginate,omitempty" xml:"paginate,omitempty"`
+}
+
+// a city detail (default view)
+//
+// Identifier: application/vnd.city+json; view=default
+type City struct {
+	CityID    *string    `form:"city_id,omitempty" json:"city_id,omitempty" yaml:"city_id,omitempty" xml:"city_id,omitempty"`
+	CityName  *string    `form:"city_name,omitempty" json:"city_name,omitempty" yaml:"city_name,omitempty" xml:"city_name,omitempty"`
+	CreatedAt *time.Time `form:"created_at,omitempty" json:"created_at,omitempty" yaml:"created_at,omitempty" xml:"created_at,omitempty"`
+}
+
+// a city detail (general view)
+//
+// Identifier: application/vnd.city+json; view=general
+type CityGeneral struct {
+	CityID    *string    `form:"city_id,omitempty" json:"city_id,omitempty" yaml:"city_id,omitempty" xml:"city_id,omitempty"`
+	CityName  *string    `form:"city_name,omitempty" json:"city_name,omitempty" yaml:"city_name,omitempty" xml:"city_name,omitempty"`
+	CreatedAt *time.Time `form:"created_at,omitempty" json:"created_at,omitempty" yaml:"created_at,omitempty" xml:"created_at,omitempty"`
+}
+
 // Login response (default view)
 //
 // Identifier: application/vnd.login_response+json; view=default
 type LoginResponse struct {
 	Token    *string   `form:"token,omitempty" json:"token,omitempty" yaml:"token,omitempty" xml:"token,omitempty"`
 	UserInfo *UserInfo `form:"user_info,omitempty" json:"user_info,omitempty" yaml:"user_info,omitempty" xml:"user_info,omitempty"`
+}
+
+// pagination of a resources (default view)
+//
+// Identifier: application/vnd.paginate+json; view=default
+type Paginate struct {
+	CurrentPage *int `form:"current_page,omitempty" json:"current_page,omitempty" yaml:"current_page,omitempty" xml:"current_page,omitempty"`
+	TotalItem   *int `form:"total_item,omitempty" json:"total_item,omitempty" yaml:"total_item,omitempty" xml:"total_item,omitempty"`
+	TotalPage   *int `form:"total_page,omitempty" json:"total_page,omitempty" yaml:"total_page,omitempty" xml:"total_page,omitempty"`
 }
 
 // A token (default view)

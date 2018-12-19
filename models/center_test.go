@@ -873,6 +873,57 @@ func testCenterToOneAddressUsingAddress(t *testing.T) {
 	}
 }
 
+func testCenterToOneCityUsingCity(t *testing.T) {
+	ctx := context.Background()
+	tx := MustTx(boil.BeginTx(ctx, nil))
+	defer func() { _ = tx.Rollback() }()
+
+	var local Center
+	var foreign City
+
+	seed := randomize.NewSeed()
+	if err := randomize.Struct(seed, &local, centerDBTypes, true, centerColumnsWithDefault...); err != nil {
+		t.Errorf("Unable to randomize Center struct: %s", err)
+	}
+	if err := randomize.Struct(seed, &foreign, cityDBTypes, false, cityColumnsWithDefault...); err != nil {
+		t.Errorf("Unable to randomize City struct: %s", err)
+	}
+
+	if err := foreign.Insert(ctx, tx, boil.Infer()); err != nil {
+		t.Fatal(err)
+	}
+
+	queries.Assign(&local.CityID, foreign.ID)
+	if err := local.Insert(ctx, tx, boil.Infer()); err != nil {
+		t.Fatal(err)
+	}
+
+	check, err := local.City().One(ctx, tx)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if !queries.Equal(check.ID, foreign.ID) {
+		t.Errorf("want: %v, got %v", foreign.ID, check.ID)
+	}
+
+	slice := CenterSlice{&local}
+	if err = local.L.LoadCity(ctx, tx, false, (*[]*Center)(&slice), nil); err != nil {
+		t.Fatal(err)
+	}
+	if local.R.City == nil {
+		t.Error("struct should have been eager loaded")
+	}
+
+	local.R.City = nil
+	if err = local.L.LoadCity(ctx, tx, true, &local, nil); err != nil {
+		t.Fatal(err)
+	}
+	if local.R.City == nil {
+		t.Error("struct should have been eager loaded")
+	}
+}
+
 func testCenterToOneSetOpAddressUsingAddress(t *testing.T) {
 	var err error
 
@@ -982,6 +1033,115 @@ func testCenterToOneRemoveOpAddressUsingAddress(t *testing.T) {
 	}
 }
 
+func testCenterToOneSetOpCityUsingCity(t *testing.T) {
+	var err error
+
+	ctx := context.Background()
+	tx := MustTx(boil.BeginTx(ctx, nil))
+	defer func() { _ = tx.Rollback() }()
+
+	var a Center
+	var b, c City
+
+	seed := randomize.NewSeed()
+	if err = randomize.Struct(seed, &a, centerDBTypes, false, strmangle.SetComplement(centerPrimaryKeyColumns, centerColumnsWithoutDefault)...); err != nil {
+		t.Fatal(err)
+	}
+	if err = randomize.Struct(seed, &b, cityDBTypes, false, strmangle.SetComplement(cityPrimaryKeyColumns, cityColumnsWithoutDefault)...); err != nil {
+		t.Fatal(err)
+	}
+	if err = randomize.Struct(seed, &c, cityDBTypes, false, strmangle.SetComplement(cityPrimaryKeyColumns, cityColumnsWithoutDefault)...); err != nil {
+		t.Fatal(err)
+	}
+
+	if err := a.Insert(ctx, tx, boil.Infer()); err != nil {
+		t.Fatal(err)
+	}
+	if err = b.Insert(ctx, tx, boil.Infer()); err != nil {
+		t.Fatal(err)
+	}
+
+	for i, x := range []*City{&b, &c} {
+		err = a.SetCity(ctx, tx, i != 0, x)
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		if a.R.City != x {
+			t.Error("relationship struct not set to correct value")
+		}
+
+		if x.R.Centers[0] != &a {
+			t.Error("failed to append to foreign relationship struct")
+		}
+		if !queries.Equal(a.CityID, x.ID) {
+			t.Error("foreign key was wrong value", a.CityID)
+		}
+
+		zero := reflect.Zero(reflect.TypeOf(a.CityID))
+		reflect.Indirect(reflect.ValueOf(&a.CityID)).Set(zero)
+
+		if err = a.Reload(ctx, tx); err != nil {
+			t.Fatal("failed to reload", err)
+		}
+
+		if !queries.Equal(a.CityID, x.ID) {
+			t.Error("foreign key was wrong value", a.CityID, x.ID)
+		}
+	}
+}
+
+func testCenterToOneRemoveOpCityUsingCity(t *testing.T) {
+	var err error
+
+	ctx := context.Background()
+	tx := MustTx(boil.BeginTx(ctx, nil))
+	defer func() { _ = tx.Rollback() }()
+
+	var a Center
+	var b City
+
+	seed := randomize.NewSeed()
+	if err = randomize.Struct(seed, &a, centerDBTypes, false, strmangle.SetComplement(centerPrimaryKeyColumns, centerColumnsWithoutDefault)...); err != nil {
+		t.Fatal(err)
+	}
+	if err = randomize.Struct(seed, &b, cityDBTypes, false, strmangle.SetComplement(cityPrimaryKeyColumns, cityColumnsWithoutDefault)...); err != nil {
+		t.Fatal(err)
+	}
+
+	if err = a.Insert(ctx, tx, boil.Infer()); err != nil {
+		t.Fatal(err)
+	}
+
+	if err = a.SetCity(ctx, tx, true, &b); err != nil {
+		t.Fatal(err)
+	}
+
+	if err = a.RemoveCity(ctx, tx, &b); err != nil {
+		t.Error("failed to remove relationship")
+	}
+
+	count, err := a.City().Count(ctx, tx)
+	if err != nil {
+		t.Error(err)
+	}
+	if count != 0 {
+		t.Error("want no relationships remaining")
+	}
+
+	if a.R.City != nil {
+		t.Error("R struct entry should be nil")
+	}
+
+	if !queries.IsValuerNil(a.CityID) {
+		t.Error("foreign key value should be nil")
+	}
+
+	if len(b.R.Centers) != 0 {
+		t.Error("failed to remove a from b's relationships")
+	}
+}
+
 func testCentersReload(t *testing.T) {
 	t.Parallel()
 
@@ -1056,7 +1216,7 @@ func testCentersSelect(t *testing.T) {
 }
 
 var (
-	centerDBTypes = map[string]string{`AddressID`: `uuid`, `CloseAt`: `timestamp with time zone`, `CreatedAt`: `timestamp with time zone`, `ID`: `uuid`, `Name`: `character varying`, `OpenAt`: `timestamp with time zone`, `UpdatedAt`: `timestamp with time zone`}
+	centerDBTypes = map[string]string{`AddressID`: `uuid`, `CityID`: `uuid`, `CloseAt`: `character varying`, `CreatedAt`: `timestamp with time zone`, `ID`: `uuid`, `Name`: `character varying`, `OpenAt`: `character varying`, `UpdatedAt`: `timestamp with time zone`}
 	_             = bytes.MinRead
 )
 

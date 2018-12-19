@@ -14,6 +14,7 @@ import (
 	"context"
 	"github.com/goadesign/goa"
 	"net/http"
+	"strconv"
 )
 
 // LoginAuthenticationContext provides the authentication login action context.
@@ -140,4 +141,136 @@ func (ctx *RegisterAuthenticationContext) BadRequest(r error) error {
 func (ctx *RegisterAuthenticationContext) InternalServerError() error {
 	ctx.ResponseData.WriteHeader(500)
 	return nil
+}
+
+// ListCityContext provides the city list action context.
+type ListCityContext struct {
+	context.Context
+	*goa.ResponseData
+	*goa.RequestData
+	Limit  int
+	Name   string
+	Offset int
+}
+
+// NewListCityContext parses the incoming request URL and body, performs validations and creates the
+// context used by the city controller list action.
+func NewListCityContext(ctx context.Context, r *http.Request, service *goa.Service) (*ListCityContext, error) {
+	var err error
+	resp := goa.ContextResponse(ctx)
+	resp.Service = service
+	req := goa.ContextRequest(ctx)
+	req.Request = r
+	rctx := ListCityContext{Context: ctx, ResponseData: resp, RequestData: req}
+	paramLimit := req.Params["limit"]
+	if len(paramLimit) == 0 {
+		rctx.Limit = 10
+	} else {
+		rawLimit := paramLimit[0]
+		if limit, err2 := strconv.Atoi(rawLimit); err2 == nil {
+			rctx.Limit = limit
+		} else {
+			err = goa.MergeErrors(err, goa.InvalidParamTypeError("limit", rawLimit, "integer"))
+		}
+	}
+	paramName := req.Params["name"]
+	if len(paramName) == 0 {
+		rctx.Name = ""
+	} else {
+		rawName := paramName[0]
+		rctx.Name = rawName
+	}
+	paramOffset := req.Params["offset"]
+	if len(paramOffset) == 0 {
+		rctx.Offset = 0
+	} else {
+		rawOffset := paramOffset[0]
+		if offset, err2 := strconv.Atoi(rawOffset); err2 == nil {
+			rctx.Offset = offset
+		} else {
+			err = goa.MergeErrors(err, goa.InvalidParamTypeError("offset", rawOffset, "integer"))
+		}
+	}
+	return &rctx, err
+}
+
+// OK sends a HTTP response with status code 200.
+func (ctx *ListCityContext) OK(r *Cities) error {
+	if ctx.ResponseData.Header().Get("Content-Type") == "" {
+		ctx.ResponseData.Header().Set("Content-Type", "application/vnd.cities+json")
+	}
+	return ctx.ResponseData.Service.Send(ctx.Context, 200, r)
+}
+
+// NotFound sends a HTTP response with status code 404.
+func (ctx *ListCityContext) NotFound(r error) error {
+	if ctx.ResponseData.Header().Get("Content-Type") == "" {
+		ctx.ResponseData.Header().Set("Content-Type", "application/vnd.goa.error")
+	}
+	return ctx.ResponseData.Service.Send(ctx.Context, 404, r)
+}
+
+// InternalServerError sends a HTTP response with status code 500.
+func (ctx *ListCityContext) InternalServerError(r error) error {
+	if ctx.ResponseData.Header().Get("Content-Type") == "" {
+		ctx.ResponseData.Header().Set("Content-Type", "application/vnd.goa.error")
+	}
+	return ctx.ResponseData.Service.Send(ctx.Context, 500, r)
+}
+
+// ShowCityContext provides the city show action context.
+type ShowCityContext struct {
+	context.Context
+	*goa.ResponseData
+	*goa.RequestData
+	CityID string
+}
+
+// NewShowCityContext parses the incoming request URL and body, performs validations and creates the
+// context used by the city controller show action.
+func NewShowCityContext(ctx context.Context, r *http.Request, service *goa.Service) (*ShowCityContext, error) {
+	var err error
+	resp := goa.ContextResponse(ctx)
+	resp.Service = service
+	req := goa.ContextRequest(ctx)
+	req.Request = r
+	rctx := ShowCityContext{Context: ctx, ResponseData: resp, RequestData: req}
+	paramCityID := req.Params["cityID"]
+	if len(paramCityID) > 0 {
+		rawCityID := paramCityID[0]
+		rctx.CityID = rawCityID
+	}
+	return &rctx, err
+}
+
+// OK sends a HTTP response with status code 200.
+func (ctx *ShowCityContext) OK(r *City) error {
+	if ctx.ResponseData.Header().Get("Content-Type") == "" {
+		ctx.ResponseData.Header().Set("Content-Type", "application/vnd.city+json")
+	}
+	return ctx.ResponseData.Service.Send(ctx.Context, 200, r)
+}
+
+// OKGeneral sends a HTTP response with status code 200.
+func (ctx *ShowCityContext) OKGeneral(r *CityGeneral) error {
+	if ctx.ResponseData.Header().Get("Content-Type") == "" {
+		ctx.ResponseData.Header().Set("Content-Type", "application/vnd.city+json")
+	}
+	return ctx.ResponseData.Service.Send(ctx.Context, 200, r)
+}
+
+// NotFound sends a HTTP response with status code 404.
+func (ctx *ShowCityContext) NotFound(r error) error {
+	if ctx.ResponseData.Header().Get("Content-Type") == "" {
+		ctx.ResponseData.Header().Set("Content-Type", "application/vnd.goa.error")
+	}
+	return ctx.ResponseData.Service.Send(ctx.Context, 404, r)
+}
+
+// InternalServerError sends a HTTP response with status code 500.
+func (ctx *ShowCityContext) InternalServerError(r error) error {
+	if ctx.ResponseData.Header().Get("Content-Type") == "" {
+		ctx.ResponseData.Header().Set("Content-Type", "application/vnd.goa.error")
+	}
+	return ctx.ResponseData.Service.Send(ctx.Context, 500, r)
 }

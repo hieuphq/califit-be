@@ -7,6 +7,7 @@ var TableNames = struct {
 	Address        string
 	Category       string
 	Center         string
+	City           string
 	Class          string
 	Image          string
 	ImageMap       string
@@ -25,6 +26,7 @@ var TableNames = struct {
 	Address:        "address",
 	Category:       "category",
 	Center:         "center",
+	City:           "city",
 	Class:          "class",
 	Image:          "image",
 	ImageMap:       "image_map",
