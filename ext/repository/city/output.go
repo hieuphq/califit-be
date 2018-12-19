@@ -8,8 +8,8 @@ import (
 // MapModelToViewGeneral ...
 func MapModelToViewGeneral(r *models.City) (*app.City, error) {
 	return &app.City{
-		CityID:    &r.ID,
-		CityName:  &r.Name.String,
+		ID:        &r.ID,
+		Name:      &r.Name.String,
 		CreatedAt: &r.CreatedAt,
 	}, nil
 }

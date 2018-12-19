@@ -34,17 +34,17 @@ var LoginRes = MediaType("application/vnd.login_response+json", func() {
 var UserInfo = MediaType("application/vnd.user_info+json", func() {
 	Description("User info")
 
-	Attribute("contact_name", String)
+	Attribute("name", String)
 	Attribute("email", String)
 	Attribute("phone", String)
-	Attribute("company_name", String)
+	Attribute("name", String)
 	Attribute("company_address", String)
 
 	View("default", func() {
-		Attribute("contact_name")
+		Attribute("name")
 		Attribute("email")
 		Attribute("phone")
-		Attribute("company_name")
+		Attribute("name")
 		Attribute("company_address")
 	})
 })
@@ -53,19 +53,19 @@ var UserInfo = MediaType("application/vnd.user_info+json", func() {
 var City = MediaType("application/vnd.city+json", func() {
 	Description("a city detail")
 
-	Attribute("city_id", String)
-	Attribute("city_name", String)
+	Attribute("id", String)
+	Attribute("name", String)
 	Attribute("created_at", DateTime)
 
 	View("default", func() {
-		Attribute("city_id", String)
-		Attribute("city_name", String)
+		Attribute("id", String)
+		Attribute("name", String)
 		Attribute("created_at", DateTime)
 	})
 
 	View("general", func() {
-		Attribute("city_id", String)
-		Attribute("city_name", String)
+		Attribute("id", String)
+		Attribute("name", String)
 		Attribute("created_at", DateTime)
 	})
 })
@@ -75,6 +75,99 @@ var CityList = MediaType("application/vnd.cities+json", func() {
 	Description("A list of City")
 
 	Attribute("data", ArrayOf(City, func() {
+		View("general")
+	}))
+	Attribute("paginate", Paginate)
+
+	View("default", func() {
+		Attribute("data")
+		Attribute("paginate")
+	})
+})
+
+// Address response data
+var Address = MediaType("application/vnd.address+json", func() {
+	Description("a address detail")
+
+	Attribute("id", String)
+	Attribute("name", String)
+	Attribute("street1", String)
+	Attribute("street2", String)
+	Attribute("city", String)
+	Attribute("state", String)
+	Attribute("country", String)
+	Attribute("zip_code", String)
+	Attribute("lat", Number)
+	Attribute("lng", Number)
+	Attribute("created_at", DateTime)
+
+	View("default", func() {
+		Attribute("id", String)
+		Attribute("name", String)
+		Attribute("street1", String)
+		Attribute("street2", String)
+		Attribute("city", String)
+		Attribute("state", String)
+		Attribute("country", String)
+		Attribute("zip_code", String)
+		Attribute("lat", Number)
+		Attribute("lng", Number)
+		Attribute("created_at", DateTime)
+	})
+
+	View("general", func() {
+		Attribute("id", String)
+		Attribute("name", String)
+		Attribute("street1", String)
+		Attribute("street2", String)
+		Attribute("city", String)
+		Attribute("state", String)
+		Attribute("country", String)
+		Attribute("zip_code", String)
+		Attribute("lat", Number)
+		Attribute("lng", Number)
+		Attribute("created_at", DateTime)
+	})
+})
+
+// Center response data
+var Center = MediaType("application/vnd.center+json", func() {
+	Description("a center detail")
+
+	Attribute("id", String)
+	Attribute("name", String)
+	Attribute("created_at", DateTime)
+	Attribute("address", Address)
+	Attribute("city", City)
+	Attribute("address_id", String)
+	Attribute("city_id", String)
+
+	View("default", func() {
+		Attribute("id", String)
+		Attribute("name", String)
+		Attribute("created_at", DateTime)
+		Attribute("address", Address)
+		Attribute("city", City)
+		Attribute("address_id", String)
+		Attribute("city_id", String)
+	})
+
+	View("general", func() {
+		Attribute("id", String)
+		Attribute("name", String)
+		Attribute("created_at", DateTime)
+		Attribute("address", Address)
+		Attribute("city", City)
+		Attribute("address_id", String)
+		Attribute("city_id", String)
+	})
+})
+
+// CenterList enum of center
+var CenterList = MediaType("application/vnd.centers+json", func() {
+	Description("A list of Center")
+
+	Attribute("data", ArrayOf(Center, func() {
 		View("general")
 	}))
 	Attribute("paginate", Paginate)

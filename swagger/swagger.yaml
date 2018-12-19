@@ -2,23 +2,230 @@ basePath: /api/
 consumes:
 - application/json
 definitions:
+  Address:
+    description: a address detail (default view)
+    example:
+      city: Adipisci et praesentium labore.
+      country: Reiciendis eum natus rerum.
+      created_at: "1970-06-21T17:34:49Z"
+      id: Accusantium vel.
+      lat: 0.4600049977027722
+      lng: 0.35516983948280595
+      name: Illum voluptatibus tenetur numquam eum.
+      state: Est aut ducimus ducimus repellat minus.
+      street1: Rerum non ipsa et.
+      street2: Dolore labore sint qui.
+      zip_code: Dolor in inventore perferendis molestiae vitae.
+    properties:
+      city:
+        example: Adipisci et praesentium labore.
+        type: string
+      country:
+        example: Reiciendis eum natus rerum.
+        type: string
+      created_at:
+        example: "1970-06-21T17:34:49Z"
+        format: date-time
+        type: string
+      id:
+        example: Accusantium vel.
+        type: string
+      lat:
+        example: 0.4600049977027722
+        format: double
+        type: number
+      lng:
+        example: 0.35516983948280595
+        format: double
+        type: number
+      name:
+        example: Illum voluptatibus tenetur numquam eum.
+        type: string
+      state:
+        example: Est aut ducimus ducimus repellat minus.
+        type: string
+      street1:
+        example: Rerum non ipsa et.
+        type: string
+      street2:
+        example: Dolore labore sint qui.
+        type: string
+      zip_code:
+        example: Dolor in inventore perferendis molestiae vitae.
+        type: string
+    title: 'Mediatype identifier: application/vnd.address+json; view=default'
+    type: object
+  Center:
+    description: a center detail (default view)
+    example:
+      address:
+        city: Adipisci et praesentium labore.
+        country: Reiciendis eum natus rerum.
+        created_at: "1970-06-21T17:34:49Z"
+        id: Accusantium vel.
+        lat: 0.4600049977027722
+        lng: 0.35516983948280595
+        name: Illum voluptatibus tenetur numquam eum.
+        state: Est aut ducimus ducimus repellat minus.
+        street1: Rerum non ipsa et.
+        street2: Dolore labore sint qui.
+        zip_code: Dolor in inventore perferendis molestiae vitae.
+      address_id: Officia a.
+      city:
+        created_at: "1978-01-18T22:02:55Z"
+        id: Officiis rerum qui amet expedita.
+        name: Voluptatum quos aut accusantium.
+      city_id: Vel ullam laudantium aliquam magnam atque reiciendis.
+      created_at: "1997-07-08T20:24:22Z"
+      id: Rerum et voluptatum rerum error eum quisquam.
+      name: Quae voluptatibus reprehenderit provident.
+    properties:
+      address:
+        $ref: '#/definitions/Address'
+      address_id:
+        example: Officia a.
+        type: string
+      city:
+        $ref: '#/definitions/City'
+      city_id:
+        example: Vel ullam laudantium aliquam magnam atque reiciendis.
+        type: string
+      created_at:
+        example: "1997-07-08T20:24:22Z"
+        format: date-time
+        type: string
+      id:
+        example: Rerum et voluptatum rerum error eum quisquam.
+        type: string
+      name:
+        example: Quae voluptatibus reprehenderit provident.
+        type: string
+    title: 'Mediatype identifier: application/vnd.center+json; view=default'
+    type: object
+  CenterGeneral:
+    description: a center detail (general view)
+    example:
+      address:
+        city: Adipisci et praesentium labore.
+        country: Reiciendis eum natus rerum.
+        created_at: "1970-06-21T17:34:49Z"
+        id: Accusantium vel.
+        lat: 0.4600049977027722
+        lng: 0.35516983948280595
+        name: Illum voluptatibus tenetur numquam eum.
+        state: Est aut ducimus ducimus repellat minus.
+        street1: Rerum non ipsa et.
+        street2: Dolore labore sint qui.
+        zip_code: Dolor in inventore perferendis molestiae vitae.
+      address_id: Officia a.
+      city:
+        created_at: "1978-01-18T22:02:55Z"
+        id: Officiis rerum qui amet expedita.
+        name: Voluptatum quos aut accusantium.
+      city_id: Vel ullam laudantium aliquam magnam atque reiciendis.
+      created_at: "1997-07-08T20:24:22Z"
+      id: Rerum et voluptatum rerum error eum quisquam.
+      name: Quae voluptatibus reprehenderit provident.
+    properties:
+      address:
+        $ref: '#/definitions/Address'
+      address_id:
+        example: Officia a.
+        type: string
+      city:
+        $ref: '#/definitions/City'
+      city_id:
+        example: Vel ullam laudantium aliquam magnam atque reiciendis.
+        type: string
+      created_at:
+        example: "1997-07-08T20:24:22Z"
+        format: date-time
+        type: string
+      id:
+        example: Rerum et voluptatum rerum error eum quisquam.
+        type: string
+      name:
+        example: Quae voluptatibus reprehenderit provident.
+        type: string
+    title: 'Mediatype identifier: application/vnd.center+json; view=general'
+    type: object
+  Centers:
+    description: A list of Center (default view)
+    example:
+      data:
+      - address:
+          city: Adipisci et praesentium labore.
+          country: Reiciendis eum natus rerum.
+          created_at: "1970-06-21T17:34:49Z"
+          id: Accusantium vel.
+          lat: 0.4600049977027722
+          lng: 0.35516983948280595
+          name: Illum voluptatibus tenetur numquam eum.
+          state: Est aut ducimus ducimus repellat minus.
+          street1: Rerum non ipsa et.
+          street2: Dolore labore sint qui.
+          zip_code: Dolor in inventore perferendis molestiae vitae.
+        address_id: Officia a.
+        city:
+          created_at: "1978-01-18T22:02:55Z"
+          id: Officiis rerum qui amet expedita.
+          name: Voluptatum quos aut accusantium.
+        city_id: Vel ullam laudantium aliquam magnam atque reiciendis.
+        created_at: "1997-07-08T20:24:22Z"
+        id: Rerum et voluptatum rerum error eum quisquam.
+        name: Quae voluptatibus reprehenderit provident.
+      paginate:
+        current_page: 1.7282615592539546e+17
+        total_item: 6.998965408074191e+17
+        total_page: 5.952561025580748e+18
+    properties:
+      data:
+        example:
+        - address:
+            city: Adipisci et praesentium labore.
+            country: Reiciendis eum natus rerum.
+            created_at: "1970-06-21T17:34:49Z"
+            id: Accusantium vel.
+            lat: 0.4600049977027722
+            lng: 0.35516983948280595
+            name: Illum voluptatibus tenetur numquam eum.
+            state: Est aut ducimus ducimus repellat minus.
+            street1: Rerum non ipsa et.
+            street2: Dolore labore sint qui.
+            zip_code: Dolor in inventore perferendis molestiae vitae.
+          address_id: Officia a.
+          city:
+            created_at: "1978-01-18T22:02:55Z"
+            id: Officiis rerum qui amet expedita.
+            name: Voluptatum quos aut accusantium.
+          city_id: Vel ullam laudantium aliquam magnam atque reiciendis.
+          created_at: "1997-07-08T20:24:22Z"
+          id: Rerum et voluptatum rerum error eum quisquam.
+          name: Quae voluptatibus reprehenderit provident.
+        items:
+          $ref: '#/definitions/CenterGeneral'
+        type: array
+      paginate:
+        $ref: '#/definitions/Paginate'
+    title: 'Mediatype identifier: application/vnd.centers+json; view=default'
+    type: object
   Cities:
     description: A list of City (default view)
     example:
       data:
-      - city_id: Et praesentium.
-        city_name: Quas reiciendis eum natus rerum sit accusantium.
-        created_at: "1993-07-17T01:28:42Z"
+      - created_at: "1997-12-21T02:00:44Z"
+        id: Dolores ut.
+        name: Illum amet suscipit excepturi excepturi.
       paginate:
-        current_page: 3.161111681195654e+16
-        total_item: 4.2427972326251945e+18
-        total_page: 3.2758635658199117e+18
+        current_page: 1.7282615592539546e+17
+        total_item: 6.998965408074191e+17
+        total_page: 5.952561025580748e+18
     properties:
       data:
         example:
-        - city_id: Et praesentium.
-          city_name: Quas reiciendis eum natus rerum sit accusantium.
-          created_at: "1993-07-17T01:28:42Z"
+        - created_at: "1997-12-21T02:00:44Z"
+          id: Dolores ut.
+          name: Illum amet suscipit excepturi excepturi.
         items:
           $ref: '#/definitions/CityGeneral'
         type: array
@@ -29,54 +236,53 @@ definitions:
   City:
     description: a city detail (default view)
     example:
-      city_id: Illum voluptatibus tenetur numquam eum.
-      city_name: Est aut ducimus ducimus repellat minus.
-      created_at: "1977-11-30T13:57:32Z"
+      created_at: "1978-01-18T22:02:55Z"
+      id: Officiis rerum qui amet expedita.
+      name: Voluptatum quos aut accusantium.
     properties:
-      city_id:
-        example: Illum voluptatibus tenetur numquam eum.
-        type: string
-      city_name:
-        example: Est aut ducimus ducimus repellat minus.
-        type: string
       created_at:
-        example: "1977-11-30T13:57:32Z"
+        example: "1978-01-18T22:02:55Z"
         format: date-time
+        type: string
+      id:
+        example: Officiis rerum qui amet expedita.
+        type: string
+      name:
+        example: Voluptatum quos aut accusantium.
         type: string
     title: 'Mediatype identifier: application/vnd.city+json; view=default'
     type: object
   CityGeneral:
     description: a city detail (general view)
     example:
-      city_id: Et praesentium.
-      city_name: Quas reiciendis eum natus rerum sit accusantium.
-      created_at: "1993-07-17T01:28:42Z"
+      created_at: "1997-12-21T02:00:44Z"
+      id: Dolores ut.
+      name: Illum amet suscipit excepturi excepturi.
     properties:
-      city_id:
-        example: Et praesentium.
-        type: string
-      city_name:
-        example: Quas reiciendis eum natus rerum sit accusantium.
-        type: string
       created_at:
-        example: "1993-07-17T01:28:42Z"
+        example: "1997-12-21T02:00:44Z"
         format: date-time
+        type: string
+      id:
+        example: Dolores ut.
+        type: string
+      name:
+        example: Illum amet suscipit excepturi excepturi.
         type: string
     title: 'Mediatype identifier: application/vnd.city+json; view=general'
     type: object
   Login_response:
     description: Login response (default view)
     example:
-      token: Non ipsa et quam dolore.
+      token: Impedit vero iste voluptas et exercitationem.
       user_info:
-        company_address: Sint qui sed dolor.
-        company_name: Inventore perferendis molestiae vitae repellendus.
-        contact_name: A quo quo officiis rerum qui amet.
-        email: Assumenda voluptatum quos.
-        phone: Accusantium hic vel.
+        company_address: Nobis ab quia pariatur corrupti laborum est.
+        email: Eos saepe minima laborum tempora dolores.
+        name: Dolorem esse provident nisi sit eius est.
+        phone: Quis consequatur.
     properties:
       token:
-        example: Non ipsa et quam dolore.
+        example: Impedit vero iste voluptas et exercitationem.
         type: string
       user_info:
         $ref: '#/definitions/User_info'
@@ -106,20 +312,20 @@ definitions:
   Paginate:
     description: pagination of a resources (default view)
     example:
-      current_page: 3.161111681195654e+16
-      total_item: 4.2427972326251945e+18
-      total_page: 3.2758635658199117e+18
+      current_page: 1.7282615592539546e+17
+      total_item: 6.998965408074191e+17
+      total_page: 5.952561025580748e+18
     properties:
       current_page:
-        example: 3.161111681195654e+16
+        example: 1.7282615592539546e+17
         format: int64
         type: integer
       total_item:
-        example: 4.2427972326251945e+18
+        example: 6.998965408074191e+17
         format: int64
         type: integer
       total_page:
-        example: 3.2758635658199117e+18
+        example: 5.952561025580748e+18
         format: int64
         type: integer
     title: 'Mediatype identifier: application/vnd.paginate+json; view=default'
@@ -131,7 +337,7 @@ definitions:
       contact_name: Doe
       email: jamesbond@gmail.com
       password: abcd1234
-      phone: p0lba0qgou
+      phone: 42hbcu0qlf
     properties:
       company_address:
         example: 445 Mount Eden Road, Mount Eden, Auckland
@@ -160,7 +366,7 @@ definitions:
         minLength: 8
         type: string
       phone:
-        example: p0lba0qgou
+        example: 42hbcu0qlf
         maxLength: 50
         type: string
     required:
@@ -175,37 +381,33 @@ definitions:
   Token:
     description: A token (default view)
     example:
-      token: Atque reiciendis saepe voluptatem rerum et voluptatum.
+      token: Ut qui qui dolorem.
     properties:
       token:
         description: A JWT token
-        example: Atque reiciendis saepe voluptatem rerum et voluptatum.
+        example: Ut qui qui dolorem.
         type: string
     title: 'Mediatype identifier: application/vnd.token+json; view=default'
     type: object
   User_info:
     description: User info (default view)
     example:
-      company_address: Sint qui sed dolor.
-      company_name: Inventore perferendis molestiae vitae repellendus.
-      contact_name: A quo quo officiis rerum qui amet.
-      email: Assumenda voluptatum quos.
-      phone: Accusantium hic vel.
+      company_address: Nobis ab quia pariatur corrupti laborum est.
+      email: Eos saepe minima laborum tempora dolores.
+      name: Dolorem esse provident nisi sit eius est.
+      phone: Quis consequatur.
     properties:
       company_address:
-        example: Sint qui sed dolor.
-        type: string
-      company_name:
-        example: Inventore perferendis molestiae vitae repellendus.
-        type: string
-      contact_name:
-        example: A quo quo officiis rerum qui amet.
+        example: Nobis ab quia pariatur corrupti laborum est.
         type: string
       email:
-        example: Assumenda voluptatum quos.
+        example: Eos saepe minima laborum tempora dolores.
+        type: string
+      name:
+        example: Dolorem esse provident nisi sit eius est.
         type: string
       phone:
-        example: Accusantium hic vel.
+        example: Quis consequatur.
         type: string
     title: 'Mediatype identifier: application/vnd.user_info+json; view=default'
     type: object
@@ -342,6 +544,87 @@ paths:
       summary: register authentication
       tags:
       - authentication
+  center:
+    get:
+      description: List centers
+      operationId: center#list
+      parameters:
+      - default: ""
+        description: query for find centers in city
+        in: query
+        name: cityID
+        required: false
+        type: string
+      - default: 10
+        description: limit for paginate
+        in: query
+        name: limit
+        required: false
+        type: integer
+      - default: ""
+        description: query for find centers by name
+        in: query
+        name: name
+        required: false
+        type: string
+      - default: 0
+        description: offset for paginate
+        in: query
+        name: offset
+        required: false
+        type: integer
+      produces:
+      - application/vnd.centers+json
+      - application/vnd.goa.error
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/Centers'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/error'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/error'
+      schemes:
+      - https
+      summary: list center
+      tags:
+      - center
+  center/{centerID}:
+    get:
+      description: Get a center by ID
+      operationId: center#show
+      parameters:
+      - description: Center ID
+        in: path
+        name: centerID
+        required: true
+        type: string
+      produces:
+      - application/vnd.center+json
+      - application/vnd.goa.error
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/Center'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/error'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/error'
+      schemes:
+      - https
+      summary: show center
+      tags:
+      - center
   city:
     get:
       description: List cities

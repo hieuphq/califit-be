@@ -14,6 +14,74 @@ import (
 	"time"
 )
 
+// a address detail (default view)
+//
+// Identifier: application/vnd.address+json; view=default
+type Address struct {
+	City      *string    `form:"city,omitempty" json:"city,omitempty" yaml:"city,omitempty" xml:"city,omitempty"`
+	Country   *string    `form:"country,omitempty" json:"country,omitempty" yaml:"country,omitempty" xml:"country,omitempty"`
+	CreatedAt *time.Time `form:"created_at,omitempty" json:"created_at,omitempty" yaml:"created_at,omitempty" xml:"created_at,omitempty"`
+	ID        *string    `form:"id,omitempty" json:"id,omitempty" yaml:"id,omitempty" xml:"id,omitempty"`
+	Lat       *float64   `form:"lat,omitempty" json:"lat,omitempty" yaml:"lat,omitempty" xml:"lat,omitempty"`
+	Lng       *float64   `form:"lng,omitempty" json:"lng,omitempty" yaml:"lng,omitempty" xml:"lng,omitempty"`
+	Name      *string    `form:"name,omitempty" json:"name,omitempty" yaml:"name,omitempty" xml:"name,omitempty"`
+	State     *string    `form:"state,omitempty" json:"state,omitempty" yaml:"state,omitempty" xml:"state,omitempty"`
+	Street1   *string    `form:"street1,omitempty" json:"street1,omitempty" yaml:"street1,omitempty" xml:"street1,omitempty"`
+	Street2   *string    `form:"street2,omitempty" json:"street2,omitempty" yaml:"street2,omitempty" xml:"street2,omitempty"`
+	ZipCode   *string    `form:"zip_code,omitempty" json:"zip_code,omitempty" yaml:"zip_code,omitempty" xml:"zip_code,omitempty"`
+}
+
+// a address detail (general view)
+//
+// Identifier: application/vnd.address+json; view=general
+type AddressGeneral struct {
+	City      *string    `form:"city,omitempty" json:"city,omitempty" yaml:"city,omitempty" xml:"city,omitempty"`
+	Country   *string    `form:"country,omitempty" json:"country,omitempty" yaml:"country,omitempty" xml:"country,omitempty"`
+	CreatedAt *time.Time `form:"created_at,omitempty" json:"created_at,omitempty" yaml:"created_at,omitempty" xml:"created_at,omitempty"`
+	ID        *string    `form:"id,omitempty" json:"id,omitempty" yaml:"id,omitempty" xml:"id,omitempty"`
+	Lat       *float64   `form:"lat,omitempty" json:"lat,omitempty" yaml:"lat,omitempty" xml:"lat,omitempty"`
+	Lng       *float64   `form:"lng,omitempty" json:"lng,omitempty" yaml:"lng,omitempty" xml:"lng,omitempty"`
+	Name      *string    `form:"name,omitempty" json:"name,omitempty" yaml:"name,omitempty" xml:"name,omitempty"`
+	State     *string    `form:"state,omitempty" json:"state,omitempty" yaml:"state,omitempty" xml:"state,omitempty"`
+	Street1   *string    `form:"street1,omitempty" json:"street1,omitempty" yaml:"street1,omitempty" xml:"street1,omitempty"`
+	Street2   *string    `form:"street2,omitempty" json:"street2,omitempty" yaml:"street2,omitempty" xml:"street2,omitempty"`
+	ZipCode   *string    `form:"zip_code,omitempty" json:"zip_code,omitempty" yaml:"zip_code,omitempty" xml:"zip_code,omitempty"`
+}
+
+// a center detail (default view)
+//
+// Identifier: application/vnd.center+json; view=default
+type Center struct {
+	Address   *Address   `form:"address,omitempty" json:"address,omitempty" yaml:"address,omitempty" xml:"address,omitempty"`
+	AddressID *string    `form:"address_id,omitempty" json:"address_id,omitempty" yaml:"address_id,omitempty" xml:"address_id,omitempty"`
+	City      *City      `form:"city,omitempty" json:"city,omitempty" yaml:"city,omitempty" xml:"city,omitempty"`
+	CityID    *string    `form:"city_id,omitempty" json:"city_id,omitempty" yaml:"city_id,omitempty" xml:"city_id,omitempty"`
+	CreatedAt *time.Time `form:"created_at,omitempty" json:"created_at,omitempty" yaml:"created_at,omitempty" xml:"created_at,omitempty"`
+	ID        *string    `form:"id,omitempty" json:"id,omitempty" yaml:"id,omitempty" xml:"id,omitempty"`
+	Name      *string    `form:"name,omitempty" json:"name,omitempty" yaml:"name,omitempty" xml:"name,omitempty"`
+}
+
+// a center detail (general view)
+//
+// Identifier: application/vnd.center+json; view=general
+type CenterGeneral struct {
+	Address   *Address   `form:"address,omitempty" json:"address,omitempty" yaml:"address,omitempty" xml:"address,omitempty"`
+	AddressID *string    `form:"address_id,omitempty" json:"address_id,omitempty" yaml:"address_id,omitempty" xml:"address_id,omitempty"`
+	City      *City      `form:"city,omitempty" json:"city,omitempty" yaml:"city,omitempty" xml:"city,omitempty"`
+	CityID    *string    `form:"city_id,omitempty" json:"city_id,omitempty" yaml:"city_id,omitempty" xml:"city_id,omitempty"`
+	CreatedAt *time.Time `form:"created_at,omitempty" json:"created_at,omitempty" yaml:"created_at,omitempty" xml:"created_at,omitempty"`
+	ID        *string    `form:"id,omitempty" json:"id,omitempty" yaml:"id,omitempty" xml:"id,omitempty"`
+	Name      *string    `form:"name,omitempty" json:"name,omitempty" yaml:"name,omitempty" xml:"name,omitempty"`
+}
+
+// A list of Center (default view)
+//
+// Identifier: application/vnd.centers+json; view=default
+type Centers struct {
+	Data     []*Center `form:"data,omitempty" json:"data,omitempty" yaml:"data,omitempty" xml:"data,omitempty"`
+	Paginate *Paginate `form:"paginate,omitempty" json:"paginate,omitempty" yaml:"paginate,omitempty" xml:"paginate,omitempty"`
+}
+
 // A list of City (default view)
 //
 // Identifier: application/vnd.cities+json; view=default
@@ -26,18 +94,18 @@ type Cities struct {
 //
 // Identifier: application/vnd.city+json; view=default
 type City struct {
-	CityID    *string    `form:"city_id,omitempty" json:"city_id,omitempty" yaml:"city_id,omitempty" xml:"city_id,omitempty"`
-	CityName  *string    `form:"city_name,omitempty" json:"city_name,omitempty" yaml:"city_name,omitempty" xml:"city_name,omitempty"`
 	CreatedAt *time.Time `form:"created_at,omitempty" json:"created_at,omitempty" yaml:"created_at,omitempty" xml:"created_at,omitempty"`
+	ID        *string    `form:"id,omitempty" json:"id,omitempty" yaml:"id,omitempty" xml:"id,omitempty"`
+	Name      *string    `form:"name,omitempty" json:"name,omitempty" yaml:"name,omitempty" xml:"name,omitempty"`
 }
 
 // a city detail (general view)
 //
 // Identifier: application/vnd.city+json; view=general
 type CityGeneral struct {
-	CityID    *string    `form:"city_id,omitempty" json:"city_id,omitempty" yaml:"city_id,omitempty" xml:"city_id,omitempty"`
-	CityName  *string    `form:"city_name,omitempty" json:"city_name,omitempty" yaml:"city_name,omitempty" xml:"city_name,omitempty"`
 	CreatedAt *time.Time `form:"created_at,omitempty" json:"created_at,omitempty" yaml:"created_at,omitempty" xml:"created_at,omitempty"`
+	ID        *string    `form:"id,omitempty" json:"id,omitempty" yaml:"id,omitempty" xml:"id,omitempty"`
+	Name      *string    `form:"name,omitempty" json:"name,omitempty" yaml:"name,omitempty" xml:"name,omitempty"`
 }
 
 // Login response (default view)
@@ -70,8 +138,7 @@ type Token struct {
 // Identifier: application/vnd.user_info+json; view=default
 type UserInfo struct {
 	CompanyAddress *string `form:"company_address,omitempty" json:"company_address,omitempty" yaml:"company_address,omitempty" xml:"company_address,omitempty"`
-	CompanyName    *string `form:"company_name,omitempty" json:"company_name,omitempty" yaml:"company_name,omitempty" xml:"company_name,omitempty"`
-	ContactName    *string `form:"contact_name,omitempty" json:"contact_name,omitempty" yaml:"contact_name,omitempty" xml:"contact_name,omitempty"`
 	Email          *string `form:"email,omitempty" json:"email,omitempty" yaml:"email,omitempty" xml:"email,omitempty"`
+	Name           *string `form:"name,omitempty" json:"name,omitempty" yaml:"name,omitempty" xml:"name,omitempty"`
 	Phone          *string `form:"phone,omitempty" json:"phone,omitempty" yaml:"phone,omitempty" xml:"phone,omitempty"`
 }

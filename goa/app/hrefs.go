@@ -15,6 +15,12 @@ import (
 	"strings"
 )
 
+// CenterHref returns the resource href.
+func CenterHref(centerID interface{}) string {
+	paramcenterID := strings.TrimLeftFunc(fmt.Sprintf("%v", centerID), func(r rune) bool { return r == '/' })
+	return fmt.Sprintf("/api/center/%v", paramcenterID)
+}
+
 // CityHref returns the resource href.
 func CityHref(cityID interface{}) string {
 	paramcityID := strings.TrimLeftFunc(fmt.Sprintf("%v", cityID), func(r rune) bool { return r == '/' })
