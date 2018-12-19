@@ -49,6 +49,26 @@ type (
 		PrettyPrint bool
 	}
 
+	// ListCenterCommand is the command line data structure for the list action of center
+	ListCenterCommand struct {
+		// query for find centers in city
+		CityID string
+		// limit for paginate
+		Limit int
+		// query for find centers by name
+		Name string
+		// offset for paginate
+		Offset      int
+		PrettyPrint bool
+	}
+
+	// ShowCenterCommand is the command line data structure for the show action of center
+	ShowCenterCommand struct {
+		// Center ID
+		CenterID    string
+		PrettyPrint bool
+	}
+
 	// ListCityCommand is the command line data structure for the list action of city
 	ListCityCommand struct {
 		// limit for paginate
@@ -73,47 +93,34 @@ func RegisterCommands(app *cobra.Command, c *client.Client) {
 	var command, sub *cobra.Command
 	command = &cobra.Command{
 		Use:   "list",
-		Short: `List cities`,
+		Short: `list action`,
 	}
-	tmp1 := new(ListCityCommand)
+	tmp1 := new(ListCenterCommand)
 	sub = &cobra.Command{
-		Use:   `city ["/api/city"]`,
+		Use:   `center ["/api/center"]`,
 		Short: ``,
 		RunE:  func(cmd *cobra.Command, args []string) error { return tmp1.Run(c, args) },
 	}
 	tmp1.RegisterFlags(sub, c)
 	sub.PersistentFlags().BoolVar(&tmp1.PrettyPrint, "pp", false, "Pretty print response body")
 	command.AddCommand(sub)
-	app.AddCommand(command)
-	command = &cobra.Command{
-		Use:   "login",
-		Short: `Sign a company user in`,
-	}
-	tmp2 := new(LoginAuthenticationCommand)
+	tmp2 := new(ListCityCommand)
 	sub = &cobra.Command{
-		Use:   `authentication ["/api/auth/login"]`,
+		Use:   `city ["/api/city"]`,
 		Short: ``,
-		Long: `
-
-Payload example:
-
-{
-   "email": "jamesbond@gmail.com",
-   "password": "abcd1234"
-}`,
-		RunE: func(cmd *cobra.Command, args []string) error { return tmp2.Run(c, args) },
+		RunE:  func(cmd *cobra.Command, args []string) error { return tmp2.Run(c, args) },
 	}
 	tmp2.RegisterFlags(sub, c)
 	sub.PersistentFlags().BoolVar(&tmp2.PrettyPrint, "pp", false, "Pretty print response body")
 	command.AddCommand(sub)
 	app.AddCommand(command)
 	command = &cobra.Command{
-		Use:   "logout",
+		Use:   "login",
 		Short: `Sign a company user in`,
 	}
-	tmp3 := new(LogoutAuthenticationCommand)
+	tmp3 := new(LoginAuthenticationCommand)
 	sub = &cobra.Command{
-		Use:   `authentication ["/api/auth/logout"]`,
+		Use:   `authentication ["/api/auth/login"]`,
 		Short: ``,
 		Long: `
 
@@ -130,10 +137,32 @@ Payload example:
 	command.AddCommand(sub)
 	app.AddCommand(command)
 	command = &cobra.Command{
+		Use:   "logout",
+		Short: `Sign a company user in`,
+	}
+	tmp4 := new(LogoutAuthenticationCommand)
+	sub = &cobra.Command{
+		Use:   `authentication ["/api/auth/logout"]`,
+		Short: ``,
+		Long: `
+
+Payload example:
+
+{
+   "email": "jamesbond@gmail.com",
+   "password": "abcd1234"
+}`,
+		RunE: func(cmd *cobra.Command, args []string) error { return tmp4.Run(c, args) },
+	}
+	tmp4.RegisterFlags(sub, c)
+	sub.PersistentFlags().BoolVar(&tmp4.PrettyPrint, "pp", false, "Pretty print response body")
+	command.AddCommand(sub)
+	app.AddCommand(command)
+	command = &cobra.Command{
 		Use:   "register",
 		Short: `Create a new user`,
 	}
-	tmp4 := new(RegisterAuthenticationCommand)
+	tmp5 := new(RegisterAuthenticationCommand)
 	sub = &cobra.Command{
 		Use:   `authentication ["/api/auth/register"]`,
 		Short: ``,
@@ -147,26 +176,35 @@ Payload example:
    "contact_name": "Doe",
    "email": "jamesbond@gmail.com",
    "password": "abcd1234",
-   "phone": "p0lba0qgou"
+   "phone": "42hbcu0qlf"
 }`,
-		RunE: func(cmd *cobra.Command, args []string) error { return tmp4.Run(c, args) },
+		RunE: func(cmd *cobra.Command, args []string) error { return tmp5.Run(c, args) },
 	}
-	tmp4.RegisterFlags(sub, c)
-	sub.PersistentFlags().BoolVar(&tmp4.PrettyPrint, "pp", false, "Pretty print response body")
+	tmp5.RegisterFlags(sub, c)
+	sub.PersistentFlags().BoolVar(&tmp5.PrettyPrint, "pp", false, "Pretty print response body")
 	command.AddCommand(sub)
 	app.AddCommand(command)
 	command = &cobra.Command{
 		Use:   "show",
-		Short: `Get a city by ID`,
+		Short: `show action`,
 	}
-	tmp5 := new(ShowCityCommand)
+	tmp6 := new(ShowCenterCommand)
+	sub = &cobra.Command{
+		Use:   `center ["/api/center/CENTERID"]`,
+		Short: ``,
+		RunE:  func(cmd *cobra.Command, args []string) error { return tmp6.Run(c, args) },
+	}
+	tmp6.RegisterFlags(sub, c)
+	sub.PersistentFlags().BoolVar(&tmp6.PrettyPrint, "pp", false, "Pretty print response body")
+	command.AddCommand(sub)
+	tmp7 := new(ShowCityCommand)
 	sub = &cobra.Command{
 		Use:   `city ["/api/city/CITYID"]`,
 		Short: ``,
-		RunE:  func(cmd *cobra.Command, args []string) error { return tmp5.Run(c, args) },
+		RunE:  func(cmd *cobra.Command, args []string) error { return tmp7.Run(c, args) },
 	}
-	tmp5.RegisterFlags(sub, c)
-	sub.PersistentFlags().BoolVar(&tmp5.PrettyPrint, "pp", false, "Pretty print response body")
+	tmp7.RegisterFlags(sub, c)
+	sub.PersistentFlags().BoolVar(&tmp7.PrettyPrint, "pp", false, "Pretty print response body")
 	command.AddCommand(sub)
 	app.AddCommand(command)
 }
@@ -421,6 +459,63 @@ func (cmd *RegisterAuthenticationCommand) Run(c *client.Client, args []string) e
 func (cmd *RegisterAuthenticationCommand) RegisterFlags(cc *cobra.Command, c *client.Client) {
 	cc.Flags().StringVar(&cmd.Payload, "payload", "", "Request body encoded in JSON")
 	cc.Flags().StringVar(&cmd.ContentType, "content", "", "Request content type override, e.g. 'application/x-www-form-urlencoded'")
+}
+
+// Run makes the HTTP request corresponding to the ListCenterCommand command.
+func (cmd *ListCenterCommand) Run(c *client.Client, args []string) error {
+	var path string
+	if len(args) > 0 {
+		path = args[0]
+	} else {
+		path = "/api/center"
+	}
+	logger := goa.NewLogger(log.New(os.Stderr, "", log.LstdFlags))
+	ctx := goa.WithLogger(context.Background(), logger)
+	resp, err := c.ListCenter(ctx, path, stringFlagVal("cityID", cmd.CityID), intFlagVal("limit", cmd.Limit), stringFlagVal("name", cmd.Name), intFlagVal("offset", cmd.Offset))
+	if err != nil {
+		goa.LogError(ctx, "failed", "err", err)
+		return err
+	}
+
+	goaclient.HandleResponse(c.Client, resp, cmd.PrettyPrint)
+	return nil
+}
+
+// RegisterFlags registers the command flags with the command line.
+func (cmd *ListCenterCommand) RegisterFlags(cc *cobra.Command, c *client.Client) {
+	var cityID string
+	cc.Flags().StringVar(&cmd.CityID, "cityID", cityID, `query for find centers in city`)
+	cc.Flags().IntVar(&cmd.Limit, "limit", 10, `limit for paginate`)
+	var name string
+	cc.Flags().StringVar(&cmd.Name, "name", name, `query for find centers by name`)
+	var offset int
+	cc.Flags().IntVar(&cmd.Offset, "offset", offset, `offset for paginate`)
+}
+
+// Run makes the HTTP request corresponding to the ShowCenterCommand command.
+func (cmd *ShowCenterCommand) Run(c *client.Client, args []string) error {
+	var path string
+	if len(args) > 0 {
+		path = args[0]
+	} else {
+		path = fmt.Sprintf("/api/center/%v", url.QueryEscape(cmd.CenterID))
+	}
+	logger := goa.NewLogger(log.New(os.Stderr, "", log.LstdFlags))
+	ctx := goa.WithLogger(context.Background(), logger)
+	resp, err := c.ShowCenter(ctx, path)
+	if err != nil {
+		goa.LogError(ctx, "failed", "err", err)
+		return err
+	}
+
+	goaclient.HandleResponse(c.Client, resp, cmd.PrettyPrint)
+	return nil
+}
+
+// RegisterFlags registers the command flags with the command line.
+func (cmd *ShowCenterCommand) RegisterFlags(cc *cobra.Command, c *client.Client) {
+	var centerID string
+	cc.Flags().StringVar(&cmd.CenterID, "centerID", centerID, `Center ID`)
 }
 
 // Run makes the HTTP request corresponding to the ListCityCommand command.

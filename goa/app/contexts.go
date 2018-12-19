@@ -143,6 +143,146 @@ func (ctx *RegisterAuthenticationContext) InternalServerError() error {
 	return nil
 }
 
+// ListCenterContext provides the center list action context.
+type ListCenterContext struct {
+	context.Context
+	*goa.ResponseData
+	*goa.RequestData
+	CityID string
+	Limit  int
+	Name   string
+	Offset int
+}
+
+// NewListCenterContext parses the incoming request URL and body, performs validations and creates the
+// context used by the center controller list action.
+func NewListCenterContext(ctx context.Context, r *http.Request, service *goa.Service) (*ListCenterContext, error) {
+	var err error
+	resp := goa.ContextResponse(ctx)
+	resp.Service = service
+	req := goa.ContextRequest(ctx)
+	req.Request = r
+	rctx := ListCenterContext{Context: ctx, ResponseData: resp, RequestData: req}
+	paramCityID := req.Params["cityID"]
+	if len(paramCityID) == 0 {
+		rctx.CityID = ""
+	} else {
+		rawCityID := paramCityID[0]
+		rctx.CityID = rawCityID
+	}
+	paramLimit := req.Params["limit"]
+	if len(paramLimit) == 0 {
+		rctx.Limit = 10
+	} else {
+		rawLimit := paramLimit[0]
+		if limit, err2 := strconv.Atoi(rawLimit); err2 == nil {
+			rctx.Limit = limit
+		} else {
+			err = goa.MergeErrors(err, goa.InvalidParamTypeError("limit", rawLimit, "integer"))
+		}
+	}
+	paramName := req.Params["name"]
+	if len(paramName) == 0 {
+		rctx.Name = ""
+	} else {
+		rawName := paramName[0]
+		rctx.Name = rawName
+	}
+	paramOffset := req.Params["offset"]
+	if len(paramOffset) == 0 {
+		rctx.Offset = 0
+	} else {
+		rawOffset := paramOffset[0]
+		if offset, err2 := strconv.Atoi(rawOffset); err2 == nil {
+			rctx.Offset = offset
+		} else {
+			err = goa.MergeErrors(err, goa.InvalidParamTypeError("offset", rawOffset, "integer"))
+		}
+	}
+	return &rctx, err
+}
+
+// OK sends a HTTP response with status code 200.
+func (ctx *ListCenterContext) OK(r *Centers) error {
+	if ctx.ResponseData.Header().Get("Content-Type") == "" {
+		ctx.ResponseData.Header().Set("Content-Type", "application/vnd.centers+json")
+	}
+	return ctx.ResponseData.Service.Send(ctx.Context, 200, r)
+}
+
+// NotFound sends a HTTP response with status code 404.
+func (ctx *ListCenterContext) NotFound(r error) error {
+	if ctx.ResponseData.Header().Get("Content-Type") == "" {
+		ctx.ResponseData.Header().Set("Content-Type", "application/vnd.goa.error")
+	}
+	return ctx.ResponseData.Service.Send(ctx.Context, 404, r)
+}
+
+// InternalServerError sends a HTTP response with status code 500.
+func (ctx *ListCenterContext) InternalServerError(r error) error {
+	if ctx.ResponseData.Header().Get("Content-Type") == "" {
+		ctx.ResponseData.Header().Set("Content-Type", "application/vnd.goa.error")
+	}
+	return ctx.ResponseData.Service.Send(ctx.Context, 500, r)
+}
+
+// ShowCenterContext provides the center show action context.
+type ShowCenterContext struct {
+	context.Context
+	*goa.ResponseData
+	*goa.RequestData
+	CenterID string
+}
+
+// NewShowCenterContext parses the incoming request URL and body, performs validations and creates the
+// context used by the center controller show action.
+func NewShowCenterContext(ctx context.Context, r *http.Request, service *goa.Service) (*ShowCenterContext, error) {
+	var err error
+	resp := goa.ContextResponse(ctx)
+	resp.Service = service
+	req := goa.ContextRequest(ctx)
+	req.Request = r
+	rctx := ShowCenterContext{Context: ctx, ResponseData: resp, RequestData: req}
+	paramCenterID := req.Params["centerID"]
+	if len(paramCenterID) > 0 {
+		rawCenterID := paramCenterID[0]
+		rctx.CenterID = rawCenterID
+	}
+	return &rctx, err
+}
+
+// OK sends a HTTP response with status code 200.
+func (ctx *ShowCenterContext) OK(r *Center) error {
+	if ctx.ResponseData.Header().Get("Content-Type") == "" {
+		ctx.ResponseData.Header().Set("Content-Type", "application/vnd.center+json")
+	}
+	return ctx.ResponseData.Service.Send(ctx.Context, 200, r)
+}
+
+// OKGeneral sends a HTTP response with status code 200.
+func (ctx *ShowCenterContext) OKGeneral(r *CenterGeneral) error {
+	if ctx.ResponseData.Header().Get("Content-Type") == "" {
+		ctx.ResponseData.Header().Set("Content-Type", "application/vnd.center+json")
+	}
+	return ctx.ResponseData.Service.Send(ctx.Context, 200, r)
+}
+
+// NotFound sends a HTTP response with status code 404.
+func (ctx *ShowCenterContext) NotFound(r error) error {
+	if ctx.ResponseData.Header().Get("Content-Type") == "" {
+		ctx.ResponseData.Header().Set("Content-Type", "application/vnd.goa.error")
+	}
+	return ctx.ResponseData.Service.Send(ctx.Context, 404, r)
+}
+
+// InternalServerError sends a HTTP response with status code 500.
+func (ctx *ShowCenterContext) InternalServerError(r error) error {
+	if ctx.ResponseData.Header().Get("Content-Type") == "" {
+		ctx.ResponseData.Header().Set("Content-Type", "application/vnd.goa.error")
+	}
+	return ctx.ResponseData.Service.Send(ctx.Context, 500, r)
+}
+
 // ListCityContext provides the city list action context.
 type ListCityContext struct {
 	context.Context

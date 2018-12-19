@@ -16,5 +16,5 @@ type Repository interface {
 
 // Var list
 var (
-	ErrcityNameExist = errors.New("city name already exist in company")
+	ErrCityNameExist = errors.New("city name already exist in company")
 )

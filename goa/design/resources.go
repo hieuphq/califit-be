@@ -77,3 +77,40 @@ var _ = Resource("city", func() {
 		Response(InternalServerError, ErrorMedia)
 	})
 })
+
+var _ = Resource("center", func() {
+	BasePath("/center")
+
+	Action("list", func() {
+		Routing(GET(""))
+		Params(func() {
+			Param("limit", Integer, "limit for paginate", func() {
+				Default(10)
+			})
+			Param("offset", Integer, "offset for paginate", func() {
+				Default(0)
+			})
+			Param("name", String, "query for find centers by name", func() {
+				Default("")
+			})
+			Param("cityID", String, "query for find centers in city", func() {
+				Default("")
+			})
+		})
+		Description("List centers")
+		Response(OK, CenterList)
+		Response(NotFound, ErrorMedia)
+		Response(InternalServerError, ErrorMedia)
+	})
+
+	Action("show", func() {
+		Routing(GET("/:centerID"))
+		Params(func() {
+			Param("centerID", String, "Center ID")
+		})
+		Description("Get a center by ID")
+		Response(OK, Center)
+		Response(NotFound, ErrorMedia)
+		Response(InternalServerError, ErrorMedia)
+	})
+})

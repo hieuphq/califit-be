@@ -42,15 +42,15 @@ func (c *Client) NewListCityRequest(ctx context.Context, path string, limit *int
 	u := url.URL{Host: c.Host, Scheme: scheme, Path: path}
 	values := u.Query()
 	if limit != nil {
-		tmp6 := strconv.Itoa(*limit)
-		values.Set("limit", tmp6)
+		tmp10 := strconv.Itoa(*limit)
+		values.Set("limit", tmp10)
 	}
 	if name != nil {
 		values.Set("name", *name)
 	}
 	if offset != nil {
-		tmp7 := strconv.Itoa(*offset)
-		values.Set("offset", tmp7)
+		tmp11 := strconv.Itoa(*offset)
+		values.Set("offset", tmp11)
 	}
 	u.RawQuery = values.Encode()
 	req, err := http.NewRequest("GET", u.String(), nil)

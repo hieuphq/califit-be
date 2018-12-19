@@ -183,6 +183,80 @@ func unmarshalRegisterAuthenticationPayload(ctx context.Context, service *goa.Se
 	return nil
 }
 
+// CenterController is the controller interface for the Center actions.
+type CenterController interface {
+	goa.Muxer
+	List(*ListCenterContext) error
+	Show(*ShowCenterContext) error
+}
+
+// MountCenterController "mounts" a Center resource controller on the given service.
+func MountCenterController(service *goa.Service, ctrl CenterController) {
+	initService(service)
+	var h goa.Handler
+	service.Mux.Handle("OPTIONS", "/api/center", ctrl.MuxHandler("preflight", handleCenterOrigin(cors.HandlePreflight()), nil))
+	service.Mux.Handle("OPTIONS", "/api/center/:centerID", ctrl.MuxHandler("preflight", handleCenterOrigin(cors.HandlePreflight()), nil))
+
+	h = func(ctx context.Context, rw http.ResponseWriter, req *http.Request) error {
+		// Check if there was an error loading the request
+		if err := goa.ContextError(ctx); err != nil {
+			return err
+		}
+		// Build the context
+		rctx, err := NewListCenterContext(ctx, req, service)
+		if err != nil {
+			return err
+		}
+		return ctrl.List(rctx)
+	}
+	h = handleCenterOrigin(h)
+	service.Mux.Handle("GET", "/api/center", ctrl.MuxHandler("list", h, nil))
+	service.LogInfo("mount", "ctrl", "Center", "action", "List", "route", "GET /api/center")
+
+	h = func(ctx context.Context, rw http.ResponseWriter, req *http.Request) error {
+		// Check if there was an error loading the request
+		if err := goa.ContextError(ctx); err != nil {
+			return err
+		}
+		// Build the context
+		rctx, err := NewShowCenterContext(ctx, req, service)
+		if err != nil {
+			return err
+		}
+		return ctrl.Show(rctx)
+	}
+	h = handleCenterOrigin(h)
+	service.Mux.Handle("GET", "/api/center/:centerID", ctrl.MuxHandler("show", h, nil))
+	service.LogInfo("mount", "ctrl", "Center", "action", "Show", "route", "GET /api/center/:centerID")
+}
+
+// handleCenterOrigin applies the CORS response headers corresponding to the origin.
+func handleCenterOrigin(h goa.Handler) goa.Handler {
+
+	return func(ctx context.Context, rw http.ResponseWriter, req *http.Request) error {
+		origin := req.Header.Get("Origin")
+		if origin == "" {
+			// Not a CORS request
+			return h(ctx, rw, req)
+		}
+		if cors.MatchOrigin(origin, "*") {
+			ctx = goa.WithLogContext(ctx, "origin", origin)
+			rw.Header().Set("Access-Control-Allow-Origin", origin)
+			rw.Header().Set("Access-Control-Expose-Headers", "Content-Type, Origin")
+			rw.Header().Set("Access-Control-Max-Age", "600")
+			rw.Header().Set("Access-Control-Allow-Credentials", "true")
+			if acrm := req.Header.Get("Access-Control-Request-Method"); acrm != "" {
+				// We are handling a preflight request
+				rw.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, PATCH, DELETE, OPTIONS")
+				rw.Header().Set("Access-Control-Allow-Headers", "Accept, Content-Type, Authorization")
+			}
+			return h(ctx, rw, req)
+		}
+
+		return h(ctx, rw, req)
+	}
+}
+
 // CityController is the controller interface for the City actions.
 type CityController interface {
 	goa.Muxer
