@@ -12,7 +12,17 @@ services:
       #- LETSENCRYPT_EMAIL=hieupq@dwarvesv.com
     expose:
       - 80
-
+  califit-db:
+    image: "postgres:9.6"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: califit
+    container_name: califit-be_db
+    ports:
+      - "5432:5432"
+    expose:
+      - 5432
 networks:
   default:
     external:

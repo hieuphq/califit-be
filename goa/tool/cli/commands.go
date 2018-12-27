@@ -6,7 +6,7 @@
 // $ goagen
 // --design=github.com/hieuphq/califit-be/goa/design
 // --out=$(GOPATH)/src/github.com/hieuphq/califit-be/goa
-// --version=v1.4.0
+// --version=v1.3.1
 
 package cli
 
@@ -86,6 +86,23 @@ type (
 		CityID      string
 		PrettyPrint bool
 	}
+
+	// ListScheduleCommand is the command line data structure for the list action of schedule
+	ListScheduleCommand struct {
+		// Center ID
+		CenterID string
+		// limit for paginate
+		Limit int
+		// offset for paginate
+		Offset      int
+		PrettyPrint bool
+	}
+
+	// DownloadCommand is the command line data structure for the download command.
+	DownloadCommand struct {
+		// OutFile is the path to the download output file.
+		OutFile string
+	}
 )
 
 // RegisterCommands registers the resource action CLI commands.
@@ -113,36 +130,23 @@ func RegisterCommands(app *cobra.Command, c *client.Client) {
 	tmp2.RegisterFlags(sub, c)
 	sub.PersistentFlags().BoolVar(&tmp2.PrettyPrint, "pp", false, "Pretty print response body")
 	command.AddCommand(sub)
-	app.AddCommand(command)
-	command = &cobra.Command{
-		Use:   "login",
-		Short: `Sign a company user in`,
-	}
-	tmp3 := new(LoginAuthenticationCommand)
+	tmp3 := new(ListScheduleCommand)
 	sub = &cobra.Command{
-		Use:   `authentication ["/api/auth/login"]`,
+		Use:   `schedule ["/api/schedule/CENTERID"]`,
 		Short: ``,
-		Long: `
-
-Payload example:
-
-{
-   "email": "jamesbond@gmail.com",
-   "password": "abcd1234"
-}`,
-		RunE: func(cmd *cobra.Command, args []string) error { return tmp3.Run(c, args) },
+		RunE:  func(cmd *cobra.Command, args []string) error { return tmp3.Run(c, args) },
 	}
 	tmp3.RegisterFlags(sub, c)
 	sub.PersistentFlags().BoolVar(&tmp3.PrettyPrint, "pp", false, "Pretty print response body")
 	command.AddCommand(sub)
 	app.AddCommand(command)
 	command = &cobra.Command{
-		Use:   "logout",
+		Use:   "login",
 		Short: `Sign a company user in`,
 	}
-	tmp4 := new(LogoutAuthenticationCommand)
+	tmp4 := new(LoginAuthenticationCommand)
 	sub = &cobra.Command{
-		Use:   `authentication ["/api/auth/logout"]`,
+		Use:   `authentication ["/api/auth/login"]`,
 		Short: ``,
 		Long: `
 
@@ -159,10 +163,32 @@ Payload example:
 	command.AddCommand(sub)
 	app.AddCommand(command)
 	command = &cobra.Command{
+		Use:   "logout",
+		Short: `Sign a company user in`,
+	}
+	tmp5 := new(LogoutAuthenticationCommand)
+	sub = &cobra.Command{
+		Use:   `authentication ["/api/auth/logout"]`,
+		Short: ``,
+		Long: `
+
+Payload example:
+
+{
+   "email": "jamesbond@gmail.com",
+   "password": "abcd1234"
+}`,
+		RunE: func(cmd *cobra.Command, args []string) error { return tmp5.Run(c, args) },
+	}
+	tmp5.RegisterFlags(sub, c)
+	sub.PersistentFlags().BoolVar(&tmp5.PrettyPrint, "pp", false, "Pretty print response body")
+	command.AddCommand(sub)
+	app.AddCommand(command)
+	command = &cobra.Command{
 		Use:   "register",
 		Short: `Create a new user`,
 	}
-	tmp5 := new(RegisterAuthenticationCommand)
+	tmp6 := new(RegisterAuthenticationCommand)
 	sub = &cobra.Command{
 		Use:   `authentication ["/api/auth/register"]`,
 		Short: ``,
@@ -176,37 +202,48 @@ Payload example:
    "contact_name": "Doe",
    "email": "jamesbond@gmail.com",
    "password": "abcd1234",
-   "phone": "42hbcu0qlf"
+   "phone": "e46tmo2z7y"
 }`,
-		RunE: func(cmd *cobra.Command, args []string) error { return tmp5.Run(c, args) },
+		RunE: func(cmd *cobra.Command, args []string) error { return tmp6.Run(c, args) },
 	}
-	tmp5.RegisterFlags(sub, c)
-	sub.PersistentFlags().BoolVar(&tmp5.PrettyPrint, "pp", false, "Pretty print response body")
+	tmp6.RegisterFlags(sub, c)
+	sub.PersistentFlags().BoolVar(&tmp6.PrettyPrint, "pp", false, "Pretty print response body")
 	command.AddCommand(sub)
 	app.AddCommand(command)
 	command = &cobra.Command{
 		Use:   "show",
 		Short: `show action`,
 	}
-	tmp6 := new(ShowCenterCommand)
+	tmp7 := new(ShowCenterCommand)
 	sub = &cobra.Command{
 		Use:   `center ["/api/center/CENTERID"]`,
-		Short: ``,
-		RunE:  func(cmd *cobra.Command, args []string) error { return tmp6.Run(c, args) },
-	}
-	tmp6.RegisterFlags(sub, c)
-	sub.PersistentFlags().BoolVar(&tmp6.PrettyPrint, "pp", false, "Pretty print response body")
-	command.AddCommand(sub)
-	tmp7 := new(ShowCityCommand)
-	sub = &cobra.Command{
-		Use:   `city ["/api/city/CITYID"]`,
 		Short: ``,
 		RunE:  func(cmd *cobra.Command, args []string) error { return tmp7.Run(c, args) },
 	}
 	tmp7.RegisterFlags(sub, c)
 	sub.PersistentFlags().BoolVar(&tmp7.PrettyPrint, "pp", false, "Pretty print response body")
 	command.AddCommand(sub)
+	tmp8 := new(ShowCityCommand)
+	sub = &cobra.Command{
+		Use:   `city ["/api/city/CITYID"]`,
+		Short: ``,
+		RunE:  func(cmd *cobra.Command, args []string) error { return tmp8.Run(c, args) },
+	}
+	tmp8.RegisterFlags(sub, c)
+	sub.PersistentFlags().BoolVar(&tmp8.PrettyPrint, "pp", false, "Pretty print response body")
+	command.AddCommand(sub)
 	app.AddCommand(command)
+
+	dl := new(DownloadCommand)
+	dlc := &cobra.Command{
+		Use:   "download [PATH]",
+		Short: "Download file with given path",
+		RunE: func(cmd *cobra.Command, args []string) error {
+			return dl.Run(c, args)
+		},
+	}
+	dlc.Flags().StringVar(&dl.OutFile, "out", "", "Output file")
+	app.AddCommand(dlc)
 }
 
 func intFlagVal(name string, parsed int) *int {
@@ -360,6 +397,45 @@ func boolArray(ins []string) ([]bool, error) {
 		vals = append(vals, *val)
 	}
 	return vals, nil
+}
+
+// Run downloads files with given paths.
+func (cmd *DownloadCommand) Run(c *client.Client, args []string) error {
+	var (
+		fnf func(context.Context, string) (int64, error)
+		fnd func(context.Context, string, string) (int64, error)
+
+		rpath   = args[0]
+		outfile = cmd.OutFile
+		logger  = goa.NewLogger(log.New(os.Stderr, "", log.LstdFlags))
+		ctx     = goa.WithLogger(context.Background(), logger)
+		err     error
+	)
+
+	if rpath[0] != '/' {
+		rpath = "/" + rpath
+	}
+	if rpath == "/swagger.json" {
+		fnf = c.DownloadSwaggerJSON
+		if outfile == "" {
+			outfile = "swagger.json"
+		}
+		goto found
+	}
+	return fmt.Errorf("don't know how to download %s", rpath)
+found:
+	ctx = goa.WithLogContext(ctx, "file", outfile)
+	if fnf != nil {
+		_, err = fnf(ctx, outfile)
+	} else {
+		_, err = fnd(ctx, rpath, outfile)
+	}
+	if err != nil {
+		goa.LogError(ctx, "failed", "err", err)
+		return err
+	}
+
+	return nil
 }
 
 // Run makes the HTTP request corresponding to the LoginAuthenticationCommand command.
@@ -571,4 +647,33 @@ func (cmd *ShowCityCommand) Run(c *client.Client, args []string) error {
 func (cmd *ShowCityCommand) RegisterFlags(cc *cobra.Command, c *client.Client) {
 	var cityID string
 	cc.Flags().StringVar(&cmd.CityID, "cityID", cityID, `City ID`)
+}
+
+// Run makes the HTTP request corresponding to the ListScheduleCommand command.
+func (cmd *ListScheduleCommand) Run(c *client.Client, args []string) error {
+	var path string
+	if len(args) > 0 {
+		path = args[0]
+	} else {
+		path = fmt.Sprintf("/api/schedule/%v", url.QueryEscape(cmd.CenterID))
+	}
+	logger := goa.NewLogger(log.New(os.Stderr, "", log.LstdFlags))
+	ctx := goa.WithLogger(context.Background(), logger)
+	resp, err := c.ListSchedule(ctx, path, intFlagVal("limit", cmd.Limit), intFlagVal("offset", cmd.Offset))
+	if err != nil {
+		goa.LogError(ctx, "failed", "err", err)
+		return err
+	}
+
+	goaclient.HandleResponse(c.Client, resp, cmd.PrettyPrint)
+	return nil
+}
+
+// RegisterFlags registers the command flags with the command line.
+func (cmd *ListScheduleCommand) RegisterFlags(cc *cobra.Command, c *client.Client) {
+	var centerID string
+	cc.Flags().StringVar(&cmd.CenterID, "centerID", centerID, `Center ID`)
+	cc.Flags().IntVar(&cmd.Limit, "limit", 10, `limit for paginate`)
+	var offset int
+	cc.Flags().IntVar(&cmd.Offset, "offset", offset, `offset for paginate`)
 }

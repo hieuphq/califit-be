@@ -191,3 +191,45 @@ var Paginate = MediaType("application/vnd.paginate+json", func() {
 		Attribute("total_item")
 	})
 })
+
+// Schedule response data
+var Schedule = MediaType("application/vnd.schedule+json", func() {
+	Description("a schedule detail")
+
+	Attribute("id", String)
+	Attribute("center_id", String)
+	Attribute("center", Center)
+	Attribute("start_at", DateTime)
+	Attribute("end_at", DateTime)
+
+	View("default", func() {
+		Attribute("id", String)
+		Attribute("center_id", String)
+		Attribute("center", Center)
+		Attribute("start_at", DateTime)
+		Attribute("end_at", DateTime)
+	})
+
+	View("general", func() {
+		Attribute("id", String)
+		Attribute("center_id", String)
+		Attribute("center", Center)
+		Attribute("start_at", DateTime)
+		Attribute("end_at", DateTime)
+	})
+})
+
+// ScheduleList enum of schedule list by center ID
+var ScheduleList = MediaType("application/vnd.schedules+json", func() {
+	Description("A list of Schedule by Center ID")
+
+	Attribute("data", ArrayOf(Schedule, func() {
+		View("general")
+	}))
+	Attribute("paginate", Paginate)
+
+	View("default", func() {
+		Attribute("data")
+		Attribute("paginate")
+	})
+})

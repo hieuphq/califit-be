@@ -6,7 +6,7 @@
 // $ goagen
 // --design=github.com/hieuphq/califit-be/goa/design
 // --out=$(GOPATH)/src/github.com/hieuphq/califit-be/goa
-// --version=v1.4.0
+// --version=v1.3.1
 
 package client
 
@@ -37,20 +37,20 @@ func (c *Client) ListCity(ctx context.Context, path string, limit *int, name *st
 func (c *Client) NewListCityRequest(ctx context.Context, path string, limit *int, name *string, offset *int) (*http.Request, error) {
 	scheme := c.Scheme
 	if scheme == "" {
-		scheme = "https"
+		scheme = "http"
 	}
 	u := url.URL{Host: c.Host, Scheme: scheme, Path: path}
 	values := u.Query()
 	if limit != nil {
-		tmp10 := strconv.Itoa(*limit)
-		values.Set("limit", tmp10)
+		tmp11 := strconv.Itoa(*limit)
+		values.Set("limit", tmp11)
 	}
 	if name != nil {
 		values.Set("name", *name)
 	}
 	if offset != nil {
-		tmp11 := strconv.Itoa(*offset)
-		values.Set("offset", tmp11)
+		tmp12 := strconv.Itoa(*offset)
+		values.Set("offset", tmp12)
 	}
 	u.RawQuery = values.Encode()
 	req, err := http.NewRequest("GET", u.String(), nil)
@@ -80,7 +80,7 @@ func (c *Client) ShowCity(ctx context.Context, path string) (*http.Response, err
 func (c *Client) NewShowCityRequest(ctx context.Context, path string) (*http.Request, error) {
 	scheme := c.Scheme
 	if scheme == "" {
-		scheme = "https"
+		scheme = "http"
 	}
 	u := url.URL{Host: c.Host, Scheme: scheme, Path: path}
 	req, err := http.NewRequest("GET", u.String(), nil)

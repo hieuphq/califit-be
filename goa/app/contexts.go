@@ -6,7 +6,7 @@
 // $ goagen
 // --design=github.com/hieuphq/califit-be/goa/design
 // --out=$(GOPATH)/src/github.com/hieuphq/califit-be/goa
-// --version=v1.4.0
+// --version=v1.3.1
 
 package app
 
@@ -409,6 +409,79 @@ func (ctx *ShowCityContext) NotFound(r error) error {
 
 // InternalServerError sends a HTTP response with status code 500.
 func (ctx *ShowCityContext) InternalServerError(r error) error {
+	if ctx.ResponseData.Header().Get("Content-Type") == "" {
+		ctx.ResponseData.Header().Set("Content-Type", "application/vnd.goa.error")
+	}
+	return ctx.ResponseData.Service.Send(ctx.Context, 500, r)
+}
+
+// ListScheduleContext provides the schedule list action context.
+type ListScheduleContext struct {
+	context.Context
+	*goa.ResponseData
+	*goa.RequestData
+	CenterID string
+	Limit    int
+	Offset   int
+}
+
+// NewListScheduleContext parses the incoming request URL and body, performs validations and creates the
+// context used by the schedule controller list action.
+func NewListScheduleContext(ctx context.Context, r *http.Request, service *goa.Service) (*ListScheduleContext, error) {
+	var err error
+	resp := goa.ContextResponse(ctx)
+	resp.Service = service
+	req := goa.ContextRequest(ctx)
+	req.Request = r
+	rctx := ListScheduleContext{Context: ctx, ResponseData: resp, RequestData: req}
+	paramCenterID := req.Params["centerID"]
+	if len(paramCenterID) > 0 {
+		rawCenterID := paramCenterID[0]
+		rctx.CenterID = rawCenterID
+	}
+	paramLimit := req.Params["limit"]
+	if len(paramLimit) == 0 {
+		rctx.Limit = 10
+	} else {
+		rawLimit := paramLimit[0]
+		if limit, err2 := strconv.Atoi(rawLimit); err2 == nil {
+			rctx.Limit = limit
+		} else {
+			err = goa.MergeErrors(err, goa.InvalidParamTypeError("limit", rawLimit, "integer"))
+		}
+	}
+	paramOffset := req.Params["offset"]
+	if len(paramOffset) == 0 {
+		rctx.Offset = 0
+	} else {
+		rawOffset := paramOffset[0]
+		if offset, err2 := strconv.Atoi(rawOffset); err2 == nil {
+			rctx.Offset = offset
+		} else {
+			err = goa.MergeErrors(err, goa.InvalidParamTypeError("offset", rawOffset, "integer"))
+		}
+	}
+	return &rctx, err
+}
+
+// OK sends a HTTP response with status code 200.
+func (ctx *ListScheduleContext) OK(r *Schedules) error {
+	if ctx.ResponseData.Header().Get("Content-Type") == "" {
+		ctx.ResponseData.Header().Set("Content-Type", "application/vnd.schedules+json")
+	}
+	return ctx.ResponseData.Service.Send(ctx.Context, 200, r)
+}
+
+// NotFound sends a HTTP response with status code 404.
+func (ctx *ListScheduleContext) NotFound(r error) error {
+	if ctx.ResponseData.Header().Get("Content-Type") == "" {
+		ctx.ResponseData.Header().Set("Content-Type", "application/vnd.goa.error")
+	}
+	return ctx.ResponseData.Service.Send(ctx.Context, 404, r)
+}
+
+// InternalServerError sends a HTTP response with status code 500.
+func (ctx *ListScheduleContext) InternalServerError(r error) error {
 	if ctx.ResponseData.Header().Get("Content-Type") == "" {
 		ctx.ResponseData.Header().Set("Content-Type", "application/vnd.goa.error")
 	}

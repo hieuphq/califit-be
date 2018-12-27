@@ -6,7 +6,7 @@
 // $ goagen
 // --design=github.com/hieuphq/califit-be/goa/design
 // --out=$(GOPATH)/src/github.com/hieuphq/califit-be/goa
-// --version=v1.4.0
+// --version=v1.3.1
 
 package app
 
@@ -123,6 +123,36 @@ type Paginate struct {
 	CurrentPage *int `form:"current_page,omitempty" json:"current_page,omitempty" yaml:"current_page,omitempty" xml:"current_page,omitempty"`
 	TotalItem   *int `form:"total_item,omitempty" json:"total_item,omitempty" yaml:"total_item,omitempty" xml:"total_item,omitempty"`
 	TotalPage   *int `form:"total_page,omitempty" json:"total_page,omitempty" yaml:"total_page,omitempty" xml:"total_page,omitempty"`
+}
+
+// a schedule detail (default view)
+//
+// Identifier: application/vnd.schedule+json; view=default
+type Schedule struct {
+	Center   *Center    `form:"center,omitempty" json:"center,omitempty" yaml:"center,omitempty" xml:"center,omitempty"`
+	CenterID *string    `form:"center_id,omitempty" json:"center_id,omitempty" yaml:"center_id,omitempty" xml:"center_id,omitempty"`
+	EndAt    *time.Time `form:"end_at,omitempty" json:"end_at,omitempty" yaml:"end_at,omitempty" xml:"end_at,omitempty"`
+	ID       *string    `form:"id,omitempty" json:"id,omitempty" yaml:"id,omitempty" xml:"id,omitempty"`
+	StartAt  *time.Time `form:"start_at,omitempty" json:"start_at,omitempty" yaml:"start_at,omitempty" xml:"start_at,omitempty"`
+}
+
+// a schedule detail (general view)
+//
+// Identifier: application/vnd.schedule+json; view=general
+type ScheduleGeneral struct {
+	Center   *Center    `form:"center,omitempty" json:"center,omitempty" yaml:"center,omitempty" xml:"center,omitempty"`
+	CenterID *string    `form:"center_id,omitempty" json:"center_id,omitempty" yaml:"center_id,omitempty" xml:"center_id,omitempty"`
+	EndAt    *time.Time `form:"end_at,omitempty" json:"end_at,omitempty" yaml:"end_at,omitempty" xml:"end_at,omitempty"`
+	ID       *string    `form:"id,omitempty" json:"id,omitempty" yaml:"id,omitempty" xml:"id,omitempty"`
+	StartAt  *time.Time `form:"start_at,omitempty" json:"start_at,omitempty" yaml:"start_at,omitempty" xml:"start_at,omitempty"`
+}
+
+// A list of Schedule by Center ID (default view)
+//
+// Identifier: application/vnd.schedules+json; view=default
+type Schedules struct {
+	Data     []*Schedule `form:"data,omitempty" json:"data,omitempty" yaml:"data,omitempty" xml:"data,omitempty"`
+	Paginate *Paginate   `form:"paginate,omitempty" json:"paginate,omitempty" yaml:"paginate,omitempty" xml:"paginate,omitempty"`
 }
 
 // A token (default view)

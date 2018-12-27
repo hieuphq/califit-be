@@ -6,7 +6,7 @@
 // $ goagen
 // --design=github.com/hieuphq/califit-be/goa/design
 // --out=$(GOPATH)/src/github.com/hieuphq/califit-be/goa
-// --version=v1.4.0
+// --version=v1.3.1
 
 package client
 

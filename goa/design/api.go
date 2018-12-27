@@ -11,8 +11,8 @@ var _ = apidsl.API("califit-be Backend API", func() {
 		apidsl.Name("Hieu Phan")
 		apidsl.Email("hieu.phq@gmail.com")
 	})
-	apidsl.Host("califit-be.club")
-	apidsl.Scheme("https")
+	apidsl.Host("localhost:9000")
+	apidsl.Scheme("http")
 	apidsl.BasePath("/api/")
 	apidsl.Origin("*", func() {
 		apidsl.Methods("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS")

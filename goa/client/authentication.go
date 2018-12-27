@@ -6,7 +6,7 @@
 // $ goagen
 // --design=github.com/hieuphq/califit-be/goa/design
 // --out=$(GOPATH)/src/github.com/hieuphq/califit-be/goa
-// --version=v1.4.0
+// --version=v1.3.1
 
 package client
 
@@ -42,7 +42,7 @@ func (c *Client) NewLoginAuthenticationRequest(ctx context.Context, path string,
 	}
 	scheme := c.Scheme
 	if scheme == "" {
-		scheme = "https"
+		scheme = "http"
 	}
 	u := url.URL{Host: c.Host, Scheme: scheme, Path: path}
 	req, err := http.NewRequest("POST", u.String(), &body)
@@ -78,7 +78,7 @@ func (c *Client) NewLogoutAuthenticationRequest(ctx context.Context, path string
 	}
 	scheme := c.Scheme
 	if scheme == "" {
-		scheme = "https"
+		scheme = "http"
 	}
 	u := url.URL{Host: c.Host, Scheme: scheme, Path: path}
 	req, err := http.NewRequest("POST", u.String(), &body)
@@ -114,7 +114,7 @@ func (c *Client) NewRegisterAuthenticationRequest(ctx context.Context, path stri
 	}
 	scheme := c.Scheme
 	if scheme == "" {
-		scheme = "https"
+		scheme = "http"
 	}
 	u := url.URL{Host: c.Host, Scheme: scheme, Path: path}
 	req, err := http.NewRequest("POST", u.String(), &body)

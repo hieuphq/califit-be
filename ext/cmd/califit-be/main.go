@@ -8,6 +8,7 @@ import (
 	"github.com/goadesign/goa/middleware"
 	"github.com/joho/godotenv"
 
+	"github.com/hieuphq/califit-be/ext/repository/schedule"
 	"github.com/hieuphq/califit-be/ext/config"
 	"github.com/hieuphq/califit-be/ext/controller"
 	"github.com/hieuphq/califit-be/ext/repository"
@@ -52,19 +53,23 @@ func main() {
 	// Setup store
 	store := &repository.Repository{
 		City: city.NewPGStore(db),
+		Schedule: schedule.NewPGStore(db),
 	}
 
 	// // Mount "authentication" controller
 	c := controller.NewAuthenticationController(service)
 	app.MountAuthenticationController(service, c)
 
-	// // Mount "swagger" controller
-	// c2 := controller.NewSwaggerController(service)
-	// app.MountSwaggerController(service, c2)
+	// Mount "swagger" controller
+	c2 := controller.NewSwaggerController(service)
+	app.MountSwaggerController(service, c2)
 
 	c3 := controller.NewCityController(service, store)
 	app.MountCityController(service, c3)
 
+
+	c4:= controller.NewScheduleController(service,store)
+	app.MountScheduleController(service,c4)
 	// c4 := controller.NewVehiclesController(service, store)
 	// app.MountVehiclesController(service, c4)
 

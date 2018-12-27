@@ -6,7 +6,7 @@
 // $ goagen
 // --design=github.com/hieuphq/califit-be/goa/design
 // --out=$(GOPATH)/src/github.com/hieuphq/califit-be/goa
-// --version=v1.4.0
+// --version=v1.3.1
 
 package app
 
@@ -306,6 +306,107 @@ func MountCityController(service *goa.Service, ctrl CityController) {
 
 // handleCityOrigin applies the CORS response headers corresponding to the origin.
 func handleCityOrigin(h goa.Handler) goa.Handler {
+
+	return func(ctx context.Context, rw http.ResponseWriter, req *http.Request) error {
+		origin := req.Header.Get("Origin")
+		if origin == "" {
+			// Not a CORS request
+			return h(ctx, rw, req)
+		}
+		if cors.MatchOrigin(origin, "*") {
+			ctx = goa.WithLogContext(ctx, "origin", origin)
+			rw.Header().Set("Access-Control-Allow-Origin", origin)
+			rw.Header().Set("Access-Control-Expose-Headers", "Content-Type, Origin")
+			rw.Header().Set("Access-Control-Max-Age", "600")
+			rw.Header().Set("Access-Control-Allow-Credentials", "true")
+			if acrm := req.Header.Get("Access-Control-Request-Method"); acrm != "" {
+				// We are handling a preflight request
+				rw.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, PATCH, DELETE, OPTIONS")
+				rw.Header().Set("Access-Control-Allow-Headers", "Accept, Content-Type, Authorization")
+			}
+			return h(ctx, rw, req)
+		}
+
+		return h(ctx, rw, req)
+	}
+}
+
+// ScheduleController is the controller interface for the Schedule actions.
+type ScheduleController interface {
+	goa.Muxer
+	List(*ListScheduleContext) error
+}
+
+// MountScheduleController "mounts" a Schedule resource controller on the given service.
+func MountScheduleController(service *goa.Service, ctrl ScheduleController) {
+	initService(service)
+	var h goa.Handler
+	service.Mux.Handle("OPTIONS", "/api/schedule/:centerID", ctrl.MuxHandler("preflight", handleScheduleOrigin(cors.HandlePreflight()), nil))
+
+	h = func(ctx context.Context, rw http.ResponseWriter, req *http.Request) error {
+		// Check if there was an error loading the request
+		if err := goa.ContextError(ctx); err != nil {
+			return err
+		}
+		// Build the context
+		rctx, err := NewListScheduleContext(ctx, req, service)
+		if err != nil {
+			return err
+		}
+		return ctrl.List(rctx)
+	}
+	h = handleScheduleOrigin(h)
+	service.Mux.Handle("GET", "/api/schedule/:centerID", ctrl.MuxHandler("list", h, nil))
+	service.LogInfo("mount", "ctrl", "Schedule", "action", "List", "route", "GET /api/schedule/:centerID")
+}
+
+// handleScheduleOrigin applies the CORS response headers corresponding to the origin.
+func handleScheduleOrigin(h goa.Handler) goa.Handler {
+
+	return func(ctx context.Context, rw http.ResponseWriter, req *http.Request) error {
+		origin := req.Header.Get("Origin")
+		if origin == "" {
+			// Not a CORS request
+			return h(ctx, rw, req)
+		}
+		if cors.MatchOrigin(origin, "*") {
+			ctx = goa.WithLogContext(ctx, "origin", origin)
+			rw.Header().Set("Access-Control-Allow-Origin", origin)
+			rw.Header().Set("Access-Control-Expose-Headers", "Content-Type, Origin")
+			rw.Header().Set("Access-Control-Max-Age", "600")
+			rw.Header().Set("Access-Control-Allow-Credentials", "true")
+			if acrm := req.Header.Get("Access-Control-Request-Method"); acrm != "" {
+				// We are handling a preflight request
+				rw.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, PATCH, DELETE, OPTIONS")
+				rw.Header().Set("Access-Control-Allow-Headers", "Accept, Content-Type, Authorization")
+			}
+			return h(ctx, rw, req)
+		}
+
+		return h(ctx, rw, req)
+	}
+}
+
+// SwaggerController is the controller interface for the Swagger actions.
+type SwaggerController interface {
+	goa.Muxer
+	goa.FileServer
+}
+
+// MountSwaggerController "mounts" a Swagger resource controller on the given service.
+func MountSwaggerController(service *goa.Service, ctrl SwaggerController) {
+	initService(service)
+	var h goa.Handler
+	service.Mux.Handle("OPTIONS", "/swagger.json", ctrl.MuxHandler("preflight", handleSwaggerOrigin(cors.HandlePreflight()), nil))
+
+	h = ctrl.FileHandler("/swagger.json", "swagger/swagger.json")
+	h = handleSwaggerOrigin(h)
+	service.Mux.Handle("GET", "/swagger.json", ctrl.MuxHandler("serve", h, nil))
+	service.LogInfo("mount", "ctrl", "Swagger", "files", "swagger/swagger.json", "route", "GET /swagger.json")
+}
+
+// handleSwaggerOrigin applies the CORS response headers corresponding to the origin.
+func handleSwaggerOrigin(h goa.Handler) goa.Handler {
 
 	return func(ctx context.Context, rw http.ResponseWriter, req *http.Request) error {
 		origin := req.Header.Get("Origin")

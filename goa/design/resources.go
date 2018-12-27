@@ -114,3 +114,27 @@ var _ = Resource("center", func() {
 		Response(InternalServerError, ErrorMedia)
 	})
 })
+
+var _ = Resource("schedule", func() {
+	BasePath("/schedule")
+
+	Action("list", func() {
+		Routing(GET("/:centerID"))
+		Params(func() {
+			Param("centerID", String, "Center ID")
+			Param("limit", Integer, "limit for paginate", func() {
+				Default(10)
+			})
+			Param("offset", Integer, "offset for paginate", func() {
+				Default(0)
+			})
+		})
+		Description("List schedule")
+		Response(OK, ScheduleList)
+		Response(NotFound, ErrorMedia)
+		Response(InternalServerError, ErrorMedia)
+	})
+})
+var _ = Resource("swagger", func() {
+	Files("/swagger.json", "swagger/swagger.json")
+})

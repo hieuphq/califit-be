@@ -17,8 +17,8 @@ bin: cln-bin bin-migrator
 
 # make local dev environment
 local-db: bin
-	eval "docker-compose -f localdb-docker-compose.yaml down"
-	eval "docker-compose -f localdb-docker-compose.yaml up -d"
+	eval "docker-compose -f docker-compose.yml down"
+	eval "docker-compose -f docker-compose.yml up -d"
 
 env-file:
 	@if ! [ -e ".env_migrator.yaml" ] ; then cat .env_migrator.yaml.example > .env_migrator.yaml; fi
@@ -27,10 +27,10 @@ env-file:
 
 local-env: local-db env-file
 	@echo "Waiting for database connection..."
-	@while ! docker exec backend_${PROJECT_NAME} pg_isready -h localhost -p 5432 > /dev/null; do \
+	@while ! docker exec ${PROJECT_NAME}_db pg_isready -h localhost -p 5432 > /dev/null; do \
 		sleep 1; \
 	done
-	bin/migrator up	
+	bin/migrator up
 
 # dep is dependencies tools
 depinit:
@@ -42,6 +42,8 @@ depcln:
 
 # gen code
 # GOA
+gen-goa-bootstrap:
+	cd goa/; goagen bootstrap -d ${PROJECT_DIR}/goa/design
 gen-goa-app:
 	cd goa/;goagen app -d ${PROJECT_DIR}/goa/design
 gen-goa-client:
@@ -52,10 +54,11 @@ gen-goa-controller:
 	cd ext/controller/;goagen controller -d ${PROJECT_DIR}/goa/design
 gen-goa: gen-goa-app gen-goa-client gen-goa-swagger gen-goa-controller
 
+
 # SQL_BOILER
 gen-sqlboiler-model:
 	@sqlboiler --wipe psql
-	
+
 gen-workaround-vendor-goa-before:
 	mv vendor vendor_wk
 gen-workaround-vendor-goa-after:

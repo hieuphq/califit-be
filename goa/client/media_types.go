@@ -6,7 +6,7 @@
 // $ goagen
 // --design=github.com/hieuphq/califit-be/goa/design
 // --out=$(GOPATH)/src/github.com/hieuphq/califit-be/goa
-// --version=v1.4.0
+// --version=v1.3.1
 
 package client
 
@@ -200,6 +200,57 @@ type Paginate struct {
 // DecodePaginate decodes the Paginate instance encoded in resp body.
 func (c *Client) DecodePaginate(resp *http.Response) (*Paginate, error) {
 	var decoded Paginate
+	err := c.Decoder.Decode(&decoded, resp.Body, resp.Header.Get("Content-Type"))
+	return &decoded, err
+}
+
+// a schedule detail (default view)
+//
+// Identifier: application/vnd.schedule+json; view=default
+type Schedule struct {
+	Center   *Center    `form:"center,omitempty" json:"center,omitempty" yaml:"center,omitempty" xml:"center,omitempty"`
+	CenterID *string    `form:"center_id,omitempty" json:"center_id,omitempty" yaml:"center_id,omitempty" xml:"center_id,omitempty"`
+	EndAt    *time.Time `form:"end_at,omitempty" json:"end_at,omitempty" yaml:"end_at,omitempty" xml:"end_at,omitempty"`
+	ID       *string    `form:"id,omitempty" json:"id,omitempty" yaml:"id,omitempty" xml:"id,omitempty"`
+	StartAt  *time.Time `form:"start_at,omitempty" json:"start_at,omitempty" yaml:"start_at,omitempty" xml:"start_at,omitempty"`
+}
+
+// a schedule detail (general view)
+//
+// Identifier: application/vnd.schedule+json; view=general
+type ScheduleGeneral struct {
+	Center   *Center    `form:"center,omitempty" json:"center,omitempty" yaml:"center,omitempty" xml:"center,omitempty"`
+	CenterID *string    `form:"center_id,omitempty" json:"center_id,omitempty" yaml:"center_id,omitempty" xml:"center_id,omitempty"`
+	EndAt    *time.Time `form:"end_at,omitempty" json:"end_at,omitempty" yaml:"end_at,omitempty" xml:"end_at,omitempty"`
+	ID       *string    `form:"id,omitempty" json:"id,omitempty" yaml:"id,omitempty" xml:"id,omitempty"`
+	StartAt  *time.Time `form:"start_at,omitempty" json:"start_at,omitempty" yaml:"start_at,omitempty" xml:"start_at,omitempty"`
+}
+
+// DecodeSchedule decodes the Schedule instance encoded in resp body.
+func (c *Client) DecodeSchedule(resp *http.Response) (*Schedule, error) {
+	var decoded Schedule
+	err := c.Decoder.Decode(&decoded, resp.Body, resp.Header.Get("Content-Type"))
+	return &decoded, err
+}
+
+// DecodeScheduleGeneral decodes the ScheduleGeneral instance encoded in resp body.
+func (c *Client) DecodeScheduleGeneral(resp *http.Response) (*ScheduleGeneral, error) {
+	var decoded ScheduleGeneral
+	err := c.Decoder.Decode(&decoded, resp.Body, resp.Header.Get("Content-Type"))
+	return &decoded, err
+}
+
+// A list of Schedule by Center ID (default view)
+//
+// Identifier: application/vnd.schedules+json; view=default
+type Schedules struct {
+	Data     []*Schedule `form:"data,omitempty" json:"data,omitempty" yaml:"data,omitempty" xml:"data,omitempty"`
+	Paginate *Paginate   `form:"paginate,omitempty" json:"paginate,omitempty" yaml:"paginate,omitempty" xml:"paginate,omitempty"`
+}
+
+// DecodeSchedules decodes the Schedules instance encoded in resp body.
+func (c *Client) DecodeSchedules(resp *http.Response) (*Schedules, error) {
+	var decoded Schedules
 	err := c.Decoder.Decode(&decoded, resp.Body, resp.Header.Get("Content-Type"))
 	return &decoded, err
 }

@@ -13,10 +13,14 @@ require (
 	github.com/goadesign/goa v1.4.0
 	github.com/gofrs/uuid v3.1.0+incompatible // indirect
 	github.com/gogo/protobuf v1.2.0 // indirect
+	github.com/google/pprof v0.0.0-20181206194817-3ea8567a2e57 // indirect
 	github.com/hashicorp/go-immutable-radix v1.0.0 // indirect
+	github.com/ianlancetaylor/demangle v0.0.0-20181102032728-5e5cf60278f6 // indirect
 	github.com/inconshreveable/log15 v0.0.0-20180818164646-67afb5ed74ec // indirect
 	github.com/inconshreveable/mousetrap v1.0.0 // indirect
 	github.com/joho/godotenv v1.3.0
+	github.com/k0kubun/colorstring v0.0.0-20150214042306-9440f1994b88 // indirect
+	github.com/k0kubun/pp v2.3.0+incompatible
 	github.com/kat-co/vala v0.0.0-20170210184112-42e1d8b61f12
 	github.com/lib/pq v1.0.0
 	github.com/manveru/faker v0.0.0-20171103152722-9fbc68a78c4d // indirect
@@ -35,6 +39,7 @@ require (
 	github.com/volatiletech/null v8.0.0+incompatible
 	github.com/volatiletech/sqlboiler v3.1.0+incompatible
 	github.com/zach-klippenstein/goregen v0.0.0-20160303162051-795b5e3961ea // indirect
+	golang.org/x/arch v0.0.0-20181203225421-5a4828bb7045 // indirect
 	golang.org/x/net v0.0.0-20181217023233-e147a9138326 // indirect
 	golang.org/x/tools v0.0.0-20181218204010-d4971274fe38 // indirect
 )

@@ -1,4 +1,3 @@
-basePath: /api/
 consumes:
 - application/json
 definitions:
@@ -337,7 +336,7 @@ definitions:
       contact_name: Doe
       email: jamesbond@gmail.com
       password: abcd1234
-      phone: 42hbcu0qlf
+      phone: e46tmo2z7y
     properties:
       company_address:
         example: 445 Mount Eden Road, Mount Eden, Auckland
@@ -366,7 +365,7 @@ definitions:
         minLength: 8
         type: string
       phone:
-        example: 42hbcu0qlf
+        example: e46tmo2z7y
         maxLength: 50
         type: string
     required:
@@ -378,14 +377,132 @@ definitions:
     - company_name
     title: RegisterPayload
     type: object
+  ScheduleGeneral:
+    description: a schedule detail (general view)
+    example:
+      center:
+        address:
+          city: Adipisci et praesentium labore.
+          country: Reiciendis eum natus rerum.
+          created_at: "1970-06-21T17:34:49Z"
+          id: Accusantium vel.
+          lat: 0.4600049977027722
+          lng: 0.35516983948280595
+          name: Illum voluptatibus tenetur numquam eum.
+          state: Est aut ducimus ducimus repellat minus.
+          street1: Rerum non ipsa et.
+          street2: Dolore labore sint qui.
+          zip_code: Dolor in inventore perferendis molestiae vitae.
+        address_id: Officia a.
+        city:
+          created_at: "1978-01-18T22:02:55Z"
+          id: Officiis rerum qui amet expedita.
+          name: Voluptatum quos aut accusantium.
+        city_id: Vel ullam laudantium aliquam magnam atque reiciendis.
+        created_at: "1997-07-08T20:24:22Z"
+        id: Rerum et voluptatum rerum error eum quisquam.
+        name: Quae voluptatibus reprehenderit provident.
+      center_id: Ut qui qui dolorem.
+      end_at: "1975-07-07T07:29:52Z"
+      id: Possimus sed porro.
+      start_at: "1995-12-27T22:48:41Z"
+    properties:
+      center:
+        $ref: '#/definitions/Center'
+      center_id:
+        example: Ut qui qui dolorem.
+        type: string
+      end_at:
+        example: "1975-07-07T07:29:52Z"
+        format: date-time
+        type: string
+      id:
+        example: Possimus sed porro.
+        type: string
+      start_at:
+        example: "1995-12-27T22:48:41Z"
+        format: date-time
+        type: string
+    title: 'Mediatype identifier: application/vnd.schedule+json; view=general'
+    type: object
+  Schedules:
+    description: A list of Schedule by Center ID (default view)
+    example:
+      data:
+      - center:
+          address:
+            city: Adipisci et praesentium labore.
+            country: Reiciendis eum natus rerum.
+            created_at: "1970-06-21T17:34:49Z"
+            id: Accusantium vel.
+            lat: 0.4600049977027722
+            lng: 0.35516983948280595
+            name: Illum voluptatibus tenetur numquam eum.
+            state: Est aut ducimus ducimus repellat minus.
+            street1: Rerum non ipsa et.
+            street2: Dolore labore sint qui.
+            zip_code: Dolor in inventore perferendis molestiae vitae.
+          address_id: Officia a.
+          city:
+            created_at: "1978-01-18T22:02:55Z"
+            id: Officiis rerum qui amet expedita.
+            name: Voluptatum quos aut accusantium.
+          city_id: Vel ullam laudantium aliquam magnam atque reiciendis.
+          created_at: "1997-07-08T20:24:22Z"
+          id: Rerum et voluptatum rerum error eum quisquam.
+          name: Quae voluptatibus reprehenderit provident.
+        center_id: Ut qui qui dolorem.
+        end_at: "1975-07-07T07:29:52Z"
+        id: Possimus sed porro.
+        start_at: "1995-12-27T22:48:41Z"
+      paginate:
+        current_page: 1.7282615592539546e+17
+        total_item: 6.998965408074191e+17
+        total_page: 5.952561025580748e+18
+    properties:
+      data:
+        example:
+        - center:
+            address:
+              city: Adipisci et praesentium labore.
+              country: Reiciendis eum natus rerum.
+              created_at: "1970-06-21T17:34:49Z"
+              id: Accusantium vel.
+              lat: 0.4600049977027722
+              lng: 0.35516983948280595
+              name: Illum voluptatibus tenetur numquam eum.
+              state: Est aut ducimus ducimus repellat minus.
+              street1: Rerum non ipsa et.
+              street2: Dolore labore sint qui.
+              zip_code: Dolor in inventore perferendis molestiae vitae.
+            address_id: Officia a.
+            city:
+              created_at: "1978-01-18T22:02:55Z"
+              id: Officiis rerum qui amet expedita.
+              name: Voluptatum quos aut accusantium.
+            city_id: Vel ullam laudantium aliquam magnam atque reiciendis.
+            created_at: "1997-07-08T20:24:22Z"
+            id: Rerum et voluptatum rerum error eum quisquam.
+            name: Quae voluptatibus reprehenderit provident.
+          center_id: Ut qui qui dolorem.
+          end_at: "1975-07-07T07:29:52Z"
+          id: Possimus sed porro.
+          start_at: "1995-12-27T22:48:41Z"
+        items:
+          $ref: '#/definitions/ScheduleGeneral'
+        type: array
+      paginate:
+        $ref: '#/definitions/Paginate'
+    title: 'Mediatype identifier: application/vnd.schedules+json; view=default'
+    type: object
   Token:
     description: A token (default view)
     example:
-      token: Ut qui qui dolorem.
+      token: Beatae ipsum.
     properties:
       token:
         description: A JWT token
-        example: Ut qui qui dolorem.
+        example: Beatae ipsum.
         type: string
     title: 'Mediatype identifier: application/vnd.token+json; view=default'
     type: object
@@ -448,7 +565,7 @@ definitions:
         type: string
     title: 'Mediatype identifier: application/vnd.goa.error; view=default'
     type: object
-host: califit-be.club
+host: localhost:9000
 info:
   contact:
     email: hieu.phq@gmail.com
@@ -457,7 +574,7 @@ info:
   title: The califit-be Backend API
   version: ""
 paths:
-  auth/login:
+  /api/auth/login:
     post:
       description: Sign a company user in
       operationId: authentication#login
@@ -486,7 +603,7 @@ paths:
       summary: login authentication
       tags:
       - authentication
-  auth/logout:
+  /api/auth/logout:
     post:
       description: Sign a company user in
       operationId: authentication#logout
@@ -515,7 +632,7 @@ paths:
       summary: logout authentication
       tags:
       - authentication
-  auth/register:
+  /api/auth/register:
     post:
       description: Create a new user
       operationId: authentication#register
@@ -544,7 +661,7 @@ paths:
       summary: register authentication
       tags:
       - authentication
-  center:
+  /api/center:
     get:
       description: List centers
       operationId: center#list
@@ -594,7 +711,7 @@ paths:
       summary: list center
       tags:
       - center
-  center/{centerID}:
+  /api/center/{centerID}:
     get:
       description: Get a center by ID
       operationId: center#show
@@ -625,7 +742,7 @@ paths:
       summary: show center
       tags:
       - center
-  city:
+  /api/city:
     get:
       description: List cities
       operationId: city#list
@@ -669,7 +786,7 @@ paths:
       summary: list city
       tags:
       - city
-  city/{cityID}:
+  /api/city/{cityID}:
     get:
       description: Get a city by ID
       operationId: city#show
@@ -700,6 +817,60 @@ paths:
       summary: show city
       tags:
       - city
+  /api/schedule/{centerID}:
+    get:
+      description: List schedule
+      operationId: schedule#list
+      parameters:
+      - description: Center ID
+        in: path
+        name: centerID
+        required: true
+        type: string
+      - default: 10
+        description: limit for paginate
+        in: query
+        name: limit
+        required: false
+        type: integer
+      - default: 0
+        description: offset for paginate
+        in: query
+        name: offset
+        required: false
+        type: integer
+      produces:
+      - application/vnd.goa.error
+      - application/vnd.schedules+json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/Schedules'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/error'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/error'
+      schemes:
+      - https
+      summary: list schedule
+      tags:
+      - schedule
+  /swagger.json:
+    get:
+      operationId: swagger#/swagger.json
+      responses:
+        "200":
+          description: File downloaded
+          schema:
+            type: file
+      schemes:
+      - https
+      summary: Download swagger/swagger.json
 produces:
 - application/json
 responses:

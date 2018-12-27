@@ -6,7 +6,7 @@
 // $ goagen
 // --design=github.com/hieuphq/califit-be/goa/design
 // --out=$(GOPATH)/src/github.com/hieuphq/califit-be/goa
-// --version=v1.4.0
+// --version=v1.3.1
 
 package client
 
@@ -37,7 +37,7 @@ func (c *Client) ListCenter(ctx context.Context, path string, cityID *string, li
 func (c *Client) NewListCenterRequest(ctx context.Context, path string, cityID *string, limit *int, name *string, offset *int) (*http.Request, error) {
 	scheme := c.Scheme
 	if scheme == "" {
-		scheme = "https"
+		scheme = "http"
 	}
 	u := url.URL{Host: c.Host, Scheme: scheme, Path: path}
 	values := u.Query()
@@ -45,15 +45,15 @@ func (c *Client) NewListCenterRequest(ctx context.Context, path string, cityID *
 		values.Set("cityID", *cityID)
 	}
 	if limit != nil {
-		tmp8 := strconv.Itoa(*limit)
-		values.Set("limit", tmp8)
+		tmp9 := strconv.Itoa(*limit)
+		values.Set("limit", tmp9)
 	}
 	if name != nil {
 		values.Set("name", *name)
 	}
 	if offset != nil {
-		tmp9 := strconv.Itoa(*offset)
-		values.Set("offset", tmp9)
+		tmp10 := strconv.Itoa(*offset)
+		values.Set("offset", tmp10)
 	}
 	u.RawQuery = values.Encode()
 	req, err := http.NewRequest("GET", u.String(), nil)
@@ -83,7 +83,7 @@ func (c *Client) ShowCenter(ctx context.Context, path string) (*http.Response, e
 func (c *Client) NewShowCenterRequest(ctx context.Context, path string) (*http.Request, error) {
 	scheme := c.Scheme
 	if scheme == "" {
-		scheme = "https"
+		scheme = "http"
 	}
 	u := url.URL{Host: c.Host, Scheme: scheme, Path: path}
 	req, err := http.NewRequest("GET", u.String(), nil)
