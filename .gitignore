@@ -48,4 +48,14 @@ Network Trash Folder
 Temporary Items
 .apdisk
 
+# GOA
+/goa/app
+/goa/client
+/goa/swagger
+/goa/tool
+swagger
+
+# SQLboiler model
+/models
+
 # End of https://www.gitignore.io/api/go,macos
