@@ -58,4 +58,6 @@ swagger
 # SQLboiler model
 /models
 
+# top level binary
+/bin
 # End of https://www.gitignore.io/api/go,macos
